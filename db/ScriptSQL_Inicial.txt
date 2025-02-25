@@ -1,0 +1,52 @@
+create database harmonicSound
+
+
+create table categoria(
+	id_categoria int not null primary key auto_increment,
+	tipo varchar(200),
+	item_id int
+);
+
+
+create table autor(
+	id_autor int not null primary key auto_increment,
+	nome varchar(200)
+);
+
+create table usuario(
+	id_usuario int not null primary key auto_increment,
+	nome varchar(200),
+	cpf int,
+	email varchar(200),
+	senha varchar(200),
+	admin boolean
+);
+
+create table favoritos(
+	id_favoritos int not null primary key auto_increment,
+	usuario_id int,
+	foreign key (usuario_id) references usuario (id_usuario)
+)
+
+
+create table item(
+	id_item int not null primary key auto_increment,
+	nome varchar(200),
+	tempo time,
+	diretorio varchar(200),
+	imagem varchar(200),
+	categoria_id int,
+	favoritos_id int,
+	autor_id int,
+	foreign key (categoria_id) references categoria(id_categoria),
+	foreign key (favoritos_id) references favoritos(id_favoritos),
+	foreign key (autor_id) references autor(id_autor)
+);
+
+create table usuario_item(
+	id_usuario_item int not null primary key auto_increment,
+	item_id int,
+	usuario_id int,
+	foreign key (item_id) references item(id_item),
+	foreign key (usuario_id) references usuario(id_usuario)
+);

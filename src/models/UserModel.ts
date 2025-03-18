@@ -2,6 +2,8 @@ import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database";
 import { cp } from "fs";
 import bcrypt from "bcrypt";
+import FavoritesModel from "./favoritesModel";
+import ItemModel from "./ItemModel";
 
 class UserModel extends Model {
   id: number | undefined;
@@ -54,6 +56,10 @@ UserModel.init(
   }
 );
 
+
+
+
+
 UserModel.beforeCreate(async (user: UserModel) => {
   await user.hashPassword();
 });
@@ -63,5 +69,18 @@ UserModel.beforeCreate(async (user: UserModel) => {
     await user.hashPassword();
   }
 });
+
+
+// UserModel.belongsToMany(ItemModel, {
+//   through: 'users_item',
+//   foreignKey: 'user_id',
+//   as: 'item'
+// })
+
+// ItemModel.belongsToMany(UserModel, {
+//   through: 'users_item',
+//   foreignKey: 'item_id',
+//   as: 'users'
+// })
 
 export default UserModel;

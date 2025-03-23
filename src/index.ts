@@ -2,12 +2,12 @@ import express from "express";
 import sequelize from "./config/database";
 import authorRoutes from './routes/authorRoutes'
 import categoryRoutes from './routes/categoryRoutes'
-// import favoritesRoutes from './routes/favoritesRoutes.tsss'
+import favoritesRoutes from './routes/favoritesRoutes'
 import itemRoutes from './routes/itemRoutes'
 import userRoutes from './routes/userRoutes'
 import "./models/ItemModel"; // Garante que o modelo seja carregado e registrado
 import "./models/UserModel";
-// import "./models/FavoritesModel.tsss";
+import "./models/FavoritesModel";
 import "./models/CategoryModel";
 import "./models/AuthorModel";
 
@@ -21,7 +21,7 @@ app.get("/", (req, res) => {
 app.use(express.json())
 app.use(authorRoutes)
 app.use(categoryRoutes)
-// app.use(favoritesRoutes)
+app.use(favoritesRoutes)
 app.use(itemRoutes)
 app.use(userRoutes)
 

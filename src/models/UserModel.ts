@@ -57,20 +57,6 @@ UserModel.init(
 );
 
 
-
-
-
-UserModel.beforeCreate(async (user: UserModel) => {
-  await user.hashPassword();
-});
-
-UserModel.beforeCreate(async (user: UserModel) => {
-  if (user.changed("password")) {
-    await user.hashPassword();
-  }
-});
-
-
 UserModel.belongsToMany(ItemModel, {
   through: 'users_item',
   foreignKey: 'user_id',
@@ -92,6 +78,21 @@ FavoritesModel.belongsTo(UserModel, {
     foreignKey: "user_id",
     as: "user"
 });
+
+
+
+
+UserModel.beforeCreate(async (user: UserModel) => {
+  await user.hashPassword();
+});
+
+UserModel.beforeCreate(async (user: UserModel) => {
+  if (user.changed("password")) {
+    await user.hashPassword();
+  }
+});
+
+
 
 
 export default UserModel;

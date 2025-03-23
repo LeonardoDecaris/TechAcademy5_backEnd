@@ -6,6 +6,7 @@ import categoryRoutes from './routes/categoryRoutes';
 import favoritesRoutes from './routes/favoritesRoutes';
 import itemRoutes from './routes/itemRoutes';
 import userRoutes from './routes/userRoutes';
+import loginRoutes from './routes/loginRoutes';
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swaggerConfig";
 import "./models/ItemModel"; 
@@ -30,6 +31,7 @@ app.use(categoryRoutes);
 app.use(favoritesRoutes);
 app.use(itemRoutes);
 app.use(userRoutes);
+app.use(loginRoutes)
 
 // Sync Database
 sequelize

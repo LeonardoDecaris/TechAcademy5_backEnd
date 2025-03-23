@@ -4,13 +4,13 @@ const options = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "API Documentation",
+      title: "Tech Academy API",
       version: "1.0.0",
+      description: "Documentação da API do projeto Tech Academy",
     },
   },
-  apis: ["./src/routes/*.ts"], // files containing annotations as above
+  apis: ["openapi.yaml", "./src/routes/*.ts"],
 };
 
 const swaggerSpec = swaggerJsdoc(options);
-
 export default swaggerSpec;

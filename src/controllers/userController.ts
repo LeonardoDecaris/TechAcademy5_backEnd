@@ -17,7 +17,7 @@ export const createUser = async (req: Request, res: Response) => {
   try{
     const { name, cpf, email, password } = req.body
 
-    if(!name || !cpf || !email || password ){
+    if(!name || !cpf || !email || !password ){
       return res.status(400).json({error: 'All values ​​are acquired' })
     }
 
@@ -36,7 +36,7 @@ export const updateUser = async (
       const { name, cpf, email, password } = req.body
       const loggedUser = req.body.user
 
-      if(!name || !cpf || !email || password ){
+      if(!name || !cpf || !email || !password ){
         return res.status(400).json({error: 'All values are acquired' })
       }
 

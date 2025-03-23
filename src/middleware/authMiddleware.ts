@@ -1,4 +1,3 @@
-import { verify } from "crypto";
 import { NextFunction, Request, Response } from "express";
 import { verifyToken } from "../utils/jtw";
 
@@ -8,10 +7,10 @@ export const authMiddleware = (
     next: NextFunction
 ) => {
 
-    const token = req.header("Authorization")?.replace("Bearer", "")
+    const token = req.header("Authorization")?.replace("Bearer ", "")
 
     if (!token) {
-        return res.status(401).json({error: "Access denied. No token"})
+        return res.status(401).json({error: "Acesso negado. Sem Token"})
     }
 
     try {
@@ -20,7 +19,7 @@ export const authMiddleware = (
         next();
         
     } catch (error) {
-        return res.status(401).json({msg: "Access denied. Invalid Token" + error})
+        return res.status(401).json({msg: "Acesso negado. Token inválido" + error})
     }
 
 }

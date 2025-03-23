@@ -1,11 +1,14 @@
+// filepath: src/index.ts
 import express from "express";
 import sequelize from "./config/database";
-import authorRoutes from './routes/authorRoutes'
-import categoryRoutes from './routes/categoryRoutes'
-import favoritesRoutes from './routes/favoritesRoutes'
-import itemRoutes from './routes/itemRoutes'
-import userRoutes from './routes/userRoutes'
-import "./models/ItemModel"; // Garante que o modelo seja carregado e registrado
+import authorRoutes from './routes/authorRoutes';
+import categoryRoutes from './routes/categoryRoutes';
+import favoritesRoutes from './routes/favoritesRoutes';
+import itemRoutes from './routes/itemRoutes';
+import userRoutes from './routes/userRoutes';
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./config/swaggerConfig";
+import "./models/ItemModel"; 
 import "./models/UserModel";
 import "./models/FavoritesModel";
 import "./models/CategoryModel";
@@ -18,12 +21,15 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.use(express.json())
-app.use(authorRoutes)
-app.use(categoryRoutes)
-app.use(favoritesRoutes)
-app.use(itemRoutes)
-app.use(userRoutes)
+// Rota para a documentação Swagger
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+app.use(express.json());
+app.use(authorRoutes);
+app.use(categoryRoutes);
+app.use(favoritesRoutes);
+app.use(itemRoutes);
+app.use(userRoutes);
 
 // Sync Database
 sequelize
@@ -32,7 +38,7 @@ sequelize
     console.log("Database encontrado");
   })
   .catch((error) => {
-    console.log("Database não encontrado");
+    console.log("Database não encontrado");
   });
 
 app.listen(port, () => {

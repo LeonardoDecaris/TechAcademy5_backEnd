@@ -1,7 +1,7 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from '../config/database';
 import CategoryModel from "./CategoryModel";
-// import FavoritesModel from "./FavoritesModel.tsss";
+import FavoritesModel from "./FavoritesModel";
 import AuthorModel from "./AuthorModel";
 import UserModel from "./UserModel";
 
@@ -98,7 +98,14 @@ AuthorModel.hasMany(ItemModel, {
 });
 
 
-
+ItemModel.belongsTo(FavoritesModel, {
+    foreignKey: 'favorites_id', 
+    as: 'favorite'
+})
+FavoritesModel.hasMany(ItemModel, {
+    foreignKey: 'favorites_id',
+    as: 'item'
+})
 
 
 

@@ -1,6 +1,5 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database";
-import { cp } from "fs";
 import bcrypt from "bcrypt";
 import FavoritesModel from "./FavoritesModel";
 import ItemModel from "./ItemModel";
@@ -56,6 +55,15 @@ UserModel.init(
   }
 );
 
+UserModel.beforeCreate(async (user: UserModel) => {
+  await user.hashPassword();
+});
+
+UserModel.beforeCreate(async (user: UserModel) => {
+  if (user.changed("password")) {
+    await user.hashPassword();
+  }
+});
 
 UserModel.belongsToMany(ItemModel, {
   through: 'users_item',
@@ -82,15 +90,7 @@ FavoritesModel.belongsTo(UserModel, {
 
 
 
-UserModel.beforeCreate(async (user: UserModel) => {
-  await user.hashPassword();
-});
 
-UserModel.beforeCreate(async (user: UserModel) => {
-  if (user.changed("password")) {
-    await user.hashPassword();
-  }
-});
 
 
 

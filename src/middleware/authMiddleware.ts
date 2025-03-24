@@ -7,7 +7,7 @@ export const authMiddleware = (
     next: NextFunction
 ) => {
 
-    const token = req.header("Authorization")?.replace("Bearer ", "")
+    const token = req.header('Authorization')?.replace('Bearer ', '')
 
     if (!token) {
         return res.status(401).json({error: "Acesso negado. Sem Token"})

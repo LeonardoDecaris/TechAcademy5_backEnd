@@ -9,11 +9,6 @@ import userRoutes from './routes/userRoutes';
 import loginRoutes from './routes/loginRoutes';
 import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swaggerConfig";
-import "./models/ItemModel"; 
-import "./models/UserModel";
-import "./models/FavoritesModel";
-import "./models/CategoryModel";
-import "./models/AuthorModel";
 
 const app = express();
 const port = 3000;
@@ -22,16 +17,14 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-// Rota para a documentação Swagger
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
 app.use(express.json());
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(authorRoutes);
 app.use(categoryRoutes);
 app.use(favoritesRoutes);
 app.use(itemRoutes);
 app.use(userRoutes);
-app.use(loginRoutes)
+app.use(loginRoutes);
 
 // Sync Database
 sequelize

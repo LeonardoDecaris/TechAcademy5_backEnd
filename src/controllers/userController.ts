@@ -18,7 +18,7 @@ export const createUser = async (req: Request, res: Response) => {
     const { name, cpf, email, password } = req.body
 
     if(!name || !cpf || !email || !password ){
-      return res.status(400).json({error: 'All values ​​are acquired' })
+      return res.status(400).json({error: 'All values are acquired' })
     }
 
     const user = await UserModel.create({name, cpf, email, password})

@@ -17,10 +17,11 @@ class UserModel extends Model {
     this.password = await bcrypt.hash(this.password!, 10);
   }
 
-  public async validatePassword(password: string): Promise<boolean> {
+  public async validatePassword(password: string) : Promise<boolean> {
     return await bcrypt.compare(password, this.password!);
   }
 }
+
 
 UserModel.init(
   {

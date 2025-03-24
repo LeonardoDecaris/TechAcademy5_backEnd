@@ -10,16 +10,17 @@ export const authMiddleware = (
     const token = req.header('Authorization')?.replace('Bearer ', '')
 
     if (!token) {
-        return res.status(401).json({error: "Acesso negado. Sem Token"})
+        return res.status(401).json({error: 'Acesso negado. Sem Token'})
     }
 
     try {
         const decoded: any = verifyToken(token);
         req.body.user = decoded;
-        next();
-        
+        next()
+    
     } catch (error) {
-        return res.status(401).json({msg: "Acesso negado. Token inválido" + error})
+        return res.status(401)
+            .json({msg: "Acesso negado. Token inválido" + error})
     }
 
 }

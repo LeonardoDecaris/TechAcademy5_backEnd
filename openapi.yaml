@@ -10,7 +10,7 @@ paths:
         - bearerAuth: []
       responses:
         '200':
-          description: Lista de usuários retornada com sucesso.
+          description: Lista de usuários.
           content:
             application/json:
               schema:

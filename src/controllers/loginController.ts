@@ -3,9 +3,11 @@ import UserModel from "../models/UserModel";
 import { generateToken } from "../utils/jtw";
 
 export const login = async (req: Request, res: Response) => {
-    const { email, password } = req.body;
+    const { email, password } = req.body
+
     if (!email || !password) {
-        return res.status(400).json({ error: 'Email and password are required' });
+        return res.status(400)
+        .json({ error: 'Email and password are required' });
     }
 
     const user = await UserModel.findOne({ where: { email } });
@@ -19,5 +21,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const token = generateToken(user);
+    
     res.status(200).json({message: "Login Sucessfull", token});
 }
+

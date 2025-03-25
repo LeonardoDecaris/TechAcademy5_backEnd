@@ -17,11 +17,10 @@ class UserModel extends Model {
     this.password = await bcrypt.hash(this.password!, 10);
   }
 
-  public async validatePassword(password: string) : Promise<boolean> {
+  public async validatePassword(password: string): Promise<boolean> {
     return await bcrypt.compare(password, this.password!);
   }
 }
-
 
 UserModel.init(
   {
@@ -61,40 +60,31 @@ UserModel.beforeCreate(async (user: UserModel) => {
   await user.hashPassword();
 });
 
-UserModel.beforeCreate(async (user: UserModel) => {
+UserModel.beforeUpdate(async (user: UserModel) => {
   if (user.changed("password")) {
     await user.hashPassword();
   }
 });
 
 UserModel.belongsToMany(ItemModel, {
-  through: 'users_item',
-  foreignKey: 'user_id',
-  as: 'item'
-})
+  through: "users_item",
+  foreignKey: "user_id",
+  as: "item",
+});
 
 ItemModel.belongsToMany(UserModel, {
-  through: 'users_item',
-  foreignKey: 'item_id',
-  as: 'users'
-})
-
+  through: "users_item",
+  foreignKey: "item_id",
+  as: "users",
+});
 
 UserModel.hasMany(FavoritesModel, {
-    foreignKey: "user_id",
-    as: "favorites"
+  foreignKey: "user_id",
+  as: "favorites",
 });
 FavoritesModel.belongsTo(UserModel, {
-    foreignKey: "user_id",
-    as: "user"
+  foreignKey: "user_id",
+  as: "user",
 });
-
-
-
-
-
-
-
-
 
 export default UserModel;

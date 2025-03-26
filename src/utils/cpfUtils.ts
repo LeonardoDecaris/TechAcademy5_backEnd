@@ -1,3 +1,5 @@
+import UserModel from "../models/UserModel";
+
 export const validateAndFormatCPF = (cpf: string): string => {
   // Remove all non-numeric characters
   const cleanedCPF = cpf.replace(/\D/g, '');
@@ -7,7 +9,37 @@ export const validateAndFormatCPF = (cpf: string): string => {
     throw new Error("Invalid CPF format");
   }
 
-  // Add additional CPF validation logic if necessary
+  // Validate CPF using the algorithm for verifying digits
+  const isValidCPF = (cpf: string): boolean => {
+    let sum;
+    let remainder;
+    sum = 0;
+    if (cpf === "00000000000") return false;
+
+    for (let i = 1; i <= 9; i++) sum += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+    remainder = (sum * 10) % 11;
+
+    if (remainder === 10 || remainder === 11) remainder = 0;
+    if (remainder !== parseInt(cpf.substring(9, 10))) return false;
+
+    sum = 0;
+    for (let i = 1; i <= 10; i++) sum += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+    remainder = (sum * 10) % 11;
+
+    if (remainder === 10 || remainder === 11) remainder = 0;
+    if (remainder !== parseInt(cpf.substring(10, 11))) return false;
+
+    return true;
+  };
+
+  if (!isValidCPF(cleanedCPF)) {
+    throw new Error("Invalid CPF");
+  }
 
   return cleanedCPF;
+};
+
+export const isCPFUnique = async (cpf: string): Promise<boolean> => {
+  const user = await UserModel.findOne({ where: { cpf } });
+  return !user;
 };

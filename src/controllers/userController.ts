@@ -18,7 +18,7 @@ export const getUserById = async (
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const parsedData = createUserSchema.parse(req.body);
+    const parsedData = await createUserSchema.parseAsync(req.body);
 
     const user = await UserModel.create(parsedData);
     res.status(201).json(user);
@@ -35,7 +35,7 @@ export const updateUser = async (
   res: Response
 ) => {
   try {
-    const parsedData = updateUserSchema.parse(req.body);
+    const parsedData = await updateUserSchema.parseAsync(req.body);
 
     const user = await UserModel.findByPk(req.params.id);
     if (!user) {

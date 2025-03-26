@@ -1,71 +1,62 @@
 import { Request, Response } from "express";
-// import FavoritesModel from "../models/FavoritesModel.tsss";
 import CategoryModel from "../models/CategoryModel";
+import { createCategorySchema, updateCategorySchema } from "../schemas/categoryValidationSchemas";
+import { z } from "zod";
 
 export const getAll = async (req: Request, res: Response) => {
-    const category = await CategoryModel.findAll()
-    res.send(category)
-  };
-  
-  export const getCategoryById = async (
-    req: Request<{ id: string }>,
-    res: Response) => {
-      const category = await CategoryModel.findByPk(req.params.id)
-      return res.json(category)
-  }
+  const categories = await CategoryModel.findAll();
+  res.send(categories);
+};
 
-  export const createCategory = async (req: Request, res: Response) => {
-    try{
-      const { name } = req.body
-  
-      if(!name){
-        return res.status(400).json({error: 'All values is  required' })
-      }
-  
-      const category = await CategoryModel.create({name})
-      res.status(201).json(category)
-    } catch (error) {
-      res.status(500).json('Internal server error' + error)
+export const getCategoryById = async (req: Request<{ id: string }>, res: Response) => {
+  const category = await CategoryModel.findByPk(req.params.id);
+  return res.json(category);
+};
+
+export const createCategory = async (req: Request, res: Response) => {
+  try {
+    const parsedData = await createCategorySchema.parseAsync(req.body);
+
+    const category = await CategoryModel.create(parsedData);
+    res.status(201).json(category);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: error.errors });
     }
+    res.status(500).json("Internal server error" + error);
   }
-  
-  export const updateCategory = async (
-    req: Request<{ id: string }>,
-    res: Response) => {
-  
-      try {
-        const { name } = req.body
-  
-        if(!name){
-          return res.status(400).json({error: 'All values is  required' })
-        }
-    
-        const category = await CategoryModel.findByPk(req.params.id)
-        if(!category){
-          return res.status(404).json({error: "Favorite not Found"})
-        }
-        
-        category.name = name;
-  
-        await category.save()
-        res.status(201).json(category)
-  
-      } catch (error) {
-        res.status(500).json("Internal server error" + error)
-      }
+};
+
+export const updateCategory = async (req: Request<{ id: string }>, res: Response) => {
+  try {
+    const parsedData = await updateCategorySchema.parseAsync(req.body);
+
+    const category = await CategoryModel.findByPk(req.params.id);
+    if (!category) {
+      return res.status(404).json({ error: "Categoria não encontrada" });
     }
-  
-  export const deleteCategoryById = async (
-    req: Request <{ id: string }>,
-    res: Response) =>{
-  
-      try {
-        const category = await CategoryModel.findByPk(req.params.id)
-        if (!category) {
-          return res.status(404).json({error: "Favorite not found"})
-        }
-      } catch (error) {
-        res.status(500).json("Internal server error" + error)
-      }
+
+    category.name = parsedData.name;
+
+    await category.save();
+    res.status(201).json(category);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: error.errors });
     }
-   
+    res.status(500).json("Internal server error" + error);
+  }
+};
+
+export const deleteCategoryById = async (req: Request<{ id: string }>, res: Response) => {
+  try {
+    const category = await CategoryModel.findByPk(req.params.id);
+    if (!category) {
+      return res.status(404).json({ error: "Categoria não encontrada" });
+    }
+    await category.destroy();
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json("Internal server error" + error);
+  }
+};

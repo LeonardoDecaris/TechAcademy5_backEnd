@@ -1,4 +1,7 @@
 import { z } from "zod";
+import CategoryModel from "../models/CategoryModel";
+import AuthorModel from "../models/AuthorModel";
+import FavoritesModel from "../models/FavoritesModel";
 
 // Função para validar e formatar o tempo no formato MM:SS
 const validateAndFormatTime = (time: string): string => {
@@ -22,15 +25,46 @@ const validateAndFormatTime = (time: string): string => {
   return formattedTime;
 };
 
+// Função para verificar se a categoria existe
+const isCategoryExists = async (categoryId: number): Promise<boolean> => {
+  const category = await CategoryModel.findByPk(categoryId);
+  return !!category;
+};
+
+// Função para verificar se o autor existe
+const isAuthorExists = async (authorId: number): Promise<boolean> => {
+  const author = await AuthorModel.findByPk(authorId);
+  return !!author;
+};
+
+// Função para verificar se os favoritos existem
+const isFavoritesExists = async (favoritesId: number): Promise<boolean> => {
+  const favorites = await FavoritesModel.findByPk(favoritesId);
+  return !!favorites;
+};
+
 // Esquema de validação para criação de item
 export const createItemSchema = z.object({
   name: z.string().nonempty("Nome é obrigatório"),
   time: z.string().nonempty("Tempo é obrigatório").transform(validateAndFormatTime),
   directory: z.string().nonempty("Diretório é obrigatório"),
   image: z.string().nonempty("Imagem é obrigatória"),
-  category_id: z.number().int().positive("ID da categoria deve ser um número positivo"),
-  favorites_id: z.number().int().positive("ID dos favoritos deve ser um número positivo"),
-  author_id: z.number().int().positive("ID do autor deve ser um número positivo"),
+  category_id: z.number().int().positive("ID da categoria deve ser um número positivo").refine(async (categoryId) => {
+    return await isCategoryExists(categoryId);
+  }, {
+    message: "Categoria não encontrada",
+  }),
+  favorites_id: z.number().int().positive("ID dos favoritos deve ser um número positivo").nullable().optional().refine(async (favoritesId) => {
+    if (favoritesId === null || favoritesId === undefined) return true;
+    return await isFavoritesExists(favoritesId);
+  }, {
+    message: "Favoritos não encontrados",
+  }),
+  author_id: z.number().int().positive("ID do autor deve ser um número positivo").refine(async (authorId) => {
+    return await isAuthorExists(authorId);
+  }, {
+    message: "Autor não encontrado",
+  }),
 });
 
 // Esquema de validação para atualização de item
@@ -39,7 +73,20 @@ export const updateItemSchema = z.object({
   time: z.string().nonempty("Tempo é obrigatório").transform(validateAndFormatTime),
   directory: z.string().nonempty("Diretório é obrigatório"),
   image: z.string().nonempty("Imagem é obrigatória"),
-  category_id: z.number().int().positive("ID da categoria deve ser um número positivo"),
-  favorites_id: z.number().int().positive("ID dos favoritos deve ser um número positivo"),
-  author_id: z.number().int().positive("ID do autor deve ser um número positivo"),
+  category_id: z.number().int().positive("ID da categoria deve ser um número positivo").refine(async (categoryId) => {
+    return await isCategoryExists(categoryId);
+  }, {
+    message: "Categoria não encontrada",
+  }),
+  favorites_id: z.number().int().positive("ID dos favoritos deve ser um número positivo").nullable().optional().refine(async (favoritesId) => {
+    if (favoritesId === null || favoritesId === undefined) return true;
+    return await isFavoritesExists(favoritesId);
+  }, {
+    message: "Favoritos não encontrados",
+  }),
+  author_id: z.number().int().positive("ID do autor deve ser um número positivo").refine(async (authorId) => {
+    return await isAuthorExists(authorId);
+  }, {
+    message: "Autor não encontrado",
+  }),
 });

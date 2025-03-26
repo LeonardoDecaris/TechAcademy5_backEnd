@@ -1,14 +1,14 @@
-import express from "express";
-import { getAll, getCategoryById, createCategory, updateCategory, deleteCategoryById} from "../controllers/categoryController";
-import { authMiddleware } from '../middleware/authMiddleware'
+import express from 'express';
+import { getAll, getCategoryById, createCategory, updateCategory, deleteCategoryById } from '../controllers/categoryController';
+import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
-router.get("/category", getAll);
-router.get("/category/:id", getCategoryById);
-router.post("/category", authMiddleware, createCategory);
-router.put("/category/:id", authMiddleware, updateCategory);
-router.delete("/category/:id", authMiddleware, deleteCategoryById);
+router.get('/categories', authMiddleware, getAll);
+router.get('/categories/:id', authMiddleware, getCategoryById);
+router.post('/categories', authMiddleware, createCategory);
+router.put('/categories/:id', authMiddleware, updateCategory);
+router.delete('/categories/:id', authMiddleware, deleteCategoryById);
 
 // DOCUMETACAO SWAGGER
 

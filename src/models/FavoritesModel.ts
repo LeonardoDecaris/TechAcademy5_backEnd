@@ -19,7 +19,7 @@ FavoritesModel.init(
             allowNull: false
         },
         user_id: {
-            type: DataTypes.INTEGER, // Alterado de STRING para INTEGER
+            type: DataTypes.INTEGER,
             allowNull: false
         }
     },

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import UserModel from "../models/UserModel";
-import { createUserSchema, updateUserSchema } from "../schemas/validationSchemas";
+import { createUserSchema, updateUserSchema } from "../schemas/userValidationSchemas";
 import { z } from "zod";
 
 export const getAll = async (req: Request, res: Response) => {

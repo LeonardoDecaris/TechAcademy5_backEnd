@@ -6,7 +6,7 @@ const validateAndFormatCPF = (cpf: string): string => {
   const cleanedCPF = cpf.replace(/\D/g, '');
 
   if (cleanedCPF.length !== 11) {
-    throw new Error("Invalid CPF format");
+    throw new Error("Formato de CPF Inválido");
   }
 
   const isValidCPF = (cpf: string): boolean => {
@@ -32,7 +32,7 @@ const validateAndFormatCPF = (cpf: string): string => {
   };
 
   if (!isValidCPF(cleanedCPF)) {
-    throw new Error("Invalid CPF");
+    throw new Error("CPF Inválido");
   }
 
   return cleanedCPF;

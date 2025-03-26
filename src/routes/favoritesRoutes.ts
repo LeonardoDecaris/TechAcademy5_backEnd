@@ -5,10 +5,12 @@ import { authMiddleware } from '../middleware/authMiddleware'
 const router = express.Router();
 
 router.get("/favorites", authMiddleware, getAll);
-router.post("/favorites", authMiddleware, createFavorite);
 router.get("/favorites/:id", authMiddleware, getFavoriteById);
+router.post("/favorites", authMiddleware, createFavorite);
 router.put("/favorites/:id", authMiddleware, updateFavorite);
 router.delete("/favorites/:id", authMiddleware, deleteFavoriteById);
+
+// DOCUMETACAO SWAGGER
 
 /**
  * @openapi

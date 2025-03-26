@@ -26,7 +26,7 @@ export const createUser = async (req: Request, res: Response) => {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: error.errors });
     }
-    res.status(500).json("Internal server error" + error);
+    res.status(500).json("Erro do Servidor Interno" + error);
   }
 };
 
@@ -39,7 +39,7 @@ export const updateUser = async (
 
     const user = await UserModel.findByPk(req.params.id);
     if (!user) {
-      return res.status(404).json({ error: "User not Found" });
+      return res.status(404).json({ message: "User not Found" });
     }
 
     user.name = parsedData.name;
@@ -51,7 +51,7 @@ export const updateUser = async (
     res.status(201).json(user);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors });
+      return res.status(400).json({ message: error.errors });
     }
     res.status(500).json("Internal server error" + error);
   }
@@ -64,7 +64,7 @@ export const deleteUserById = async (
   try {
     const user = await UserModel.findByPk(req.params.id);
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
     await user.destroy();
     res.status(204).send();

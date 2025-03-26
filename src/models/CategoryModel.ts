@@ -1,7 +1,6 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
 import sequelize from "../config/database"; // Adjust the path as necessary
 
-
 class CategoryModel extends Model{
     id: number | undefined;
     name: string | undefined;

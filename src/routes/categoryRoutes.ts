@@ -4,11 +4,13 @@ import { authMiddleware } from '../middleware/authMiddleware'
 
 const router = express.Router();
 
-router.get("/category", authMiddleware, getAll);
+router.get("/category", getAll);
+router.get("/category/:id", getCategoryById);
 router.post("/category", authMiddleware, createCategory);
-router.get("/category/:id", authMiddleware, getCategoryById);
 router.put("/category/:id", authMiddleware, updateCategory);
 router.delete("/category/:id", authMiddleware, deleteCategoryById);
+
+// DOCUMETACAO SWAGGER
 
 /**
  * @openapi

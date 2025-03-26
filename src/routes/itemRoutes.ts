@@ -1,13 +1,16 @@
 import express from 'express';
 import { getAll, getItemById, createItem, updateItem, deleteItemById } from '../controllers/itemController';
+import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
 router.get('/items', getAll);
 router.get('/items/:id', getItemById);
-router.post('/items', createItem);
-router.put('/items/:id', updateItem);
-router.delete('/items/:id', deleteItemById);
+router.post('/items', authMiddleware, createItem);
+router.put('/items/:id', authMiddleware, updateItem);
+router.delete('/items/:id', authMiddleware, deleteItemById);
+
+// DOCUMETACAO SWAGGER
 
 /**
  * @openapi

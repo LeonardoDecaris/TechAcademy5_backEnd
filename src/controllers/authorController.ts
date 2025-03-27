@@ -9,8 +9,15 @@ export const getAll = async (req: Request, res: Response) => {
 };
 
 export const getAuthorById = async (req: Request<{ id: string }>, res: Response) => {
-  const author = await AuthorModel.findByPk(req.params.id);
-  return res.json(author);
+  try {
+    const author = await AuthorModel.findByPk(req.params.id);
+    if (!author) {
+      return res.status(404).json({ message: "Ator não encontrado" });
+    }
+    return res.status(200).json(author);
+  } catch (error) {
+    res.status(500).json("Erro do Servidor Interno" + error);
+  }
 };
 
 export const createAuthor = async (req: Request, res: Response) => {
@@ -55,7 +62,7 @@ export const deleteAuthorById = async (req: Request<{ id: string }>, res: Respon
       return res.status(404).json({ error: "Autor não encontrado" });
     }
     await author.destroy();
-    res.status(204).send();
+    res.status(200).json({ message: "Ator deletado com sucesso" });
   } catch (error) {
     res.status(500).json("Internal server error" + error);
   }

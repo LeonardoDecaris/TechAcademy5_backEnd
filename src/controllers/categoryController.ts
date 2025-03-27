@@ -9,8 +9,15 @@ export const getAll = async (req: Request, res: Response) => {
 };
 
 export const getCategoryById = async (req: Request<{ id: string }>, res: Response) => {
-  const category = await CategoryModel.findByPk(req.params.id);
-  return res.json(category);
+  try {
+    const category = await CategoryModel.findByPk(req.params.id);
+    if (!category) {
+      return res.status(404).json({ message: "Categoria não encontrada" });
+    }
+    return res.status(200).json(category);
+  } catch (error) {
+    res.status(500).json("Erro do Servidor Interno" + error);
+  }
 };
 
 export const createCategory = async (req: Request, res: Response) => {
@@ -55,7 +62,7 @@ export const deleteCategoryById = async (req: Request<{ id: string }>, res: Resp
       return res.status(404).json({ error: "Categoria não encontrada" });
     }
     await category.destroy();
-    res.status(204).send();
+    res.status(200).json({ message: "Categoria deletada com sucesso" });
   } catch (error) {
     res.status(500).json("Internal server error" + error);
   }

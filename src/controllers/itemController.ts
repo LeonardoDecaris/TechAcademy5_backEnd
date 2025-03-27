@@ -9,8 +9,15 @@ export const getAll = async (req: Request, res: Response) => {
 };
 
 export const getItemById = async (req: Request<{ id: string }>, res: Response) => {
-  const item = await ItemModel.findByPk(req.params.id);
-  return res.json(item);
+  try {
+    const item = await ItemModel.findByPk(req.params.id);
+    if (!item) {
+      return res.status(404).json({ message: "Item não encontrado" });
+    }
+    return res.status(200).json(item);
+  } catch (error) {
+    res.status(500).json("Erro do Servidor Interno" + error);
+  }
 };
 
 export const createItem = async (req: Request, res: Response) => {
@@ -61,7 +68,7 @@ export const deleteItemById = async (req: Request<{ id: string }>, res: Response
       return res.status(404).json({ error: "Item not found" });
     }
     await item.destroy();
-    res.status(204).send();
+    res.status(200).json({ message: "Item deletado com sucesso" });
   } catch (error) {
     res.status(500).json("Internal server error" + error);
   }

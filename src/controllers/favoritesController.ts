@@ -9,8 +9,15 @@ export const getAll = async (req: Request, res: Response) => {
 };
 
 export const getFavoriteById = async (req: Request<{ id: string }>, res: Response) => {
-  const favorite = await FavoritesModel.findByPk(req.params.id);
-  return res.json(favorite);
+  try {
+    const favorite = await FavoritesModel.findByPk(req.params.id);
+    if (!favorite) {
+      return res.status(404).json({ message: "Favorito não encontrado" });
+    }
+    return res.status(200).json(favorite);
+  } catch (error) {
+    res.status(500).json("Erro do Servidor Interno" + error);
+  }
 };
 
 export const createFavorite = async (req: Request, res: Response) => {
@@ -56,7 +63,7 @@ export const deleteFavoriteById = async (req: Request<{ id: string }>, res: Resp
       return res.status(404).json({ error: "Favorito não encontrado" });
     }
     await favorite.destroy();
-    res.status(204).send();
+    res.status(200).json({ message: "Favorito deletado com sucesso" });
   } catch (error) {
     res.status(500).json("Internal server error" + error);
   }

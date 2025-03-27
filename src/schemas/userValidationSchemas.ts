@@ -50,34 +50,40 @@ const isEmailUnique = async (email: string): Promise<boolean> => {
   return !user;
 };
 
-// Esquema de validação de email
-const emailSchema = z.string().email("Endereço de email inválido").refine(async (email) => {
+// Esquema de validação de email para criação
+const emailSchemaForCreate = z.string().email("Endereço de email inválido").refine(async (email) => {
   const isUnique = await isEmailUnique(email);
   return isUnique;
 }, {
   message: "Email já existe",
 });
 
-// Esquema de validação de CPF
-const cpfSchema = z.string().nonempty("CPF é obrigatório").transform(validateAndFormatCPF).refine(async (cpf) => {
+// Esquema de validação de CPF para criação
+const cpfSchemaForCreate = z.string().nonempty("CPF é obrigatório").transform(validateAndFormatCPF).refine(async (cpf) => {
   const isUnique = await isCPFUnique(cpf);
   return isUnique;
 }, {
   message: "Esse CPF já existe",
 });
 
+// Esquema de validação de email para atualização (sem validação de unicidade)
+const emailSchemaForUpdate = z.string().email("Endereço de email inválido");
+
+// Esquema de validação de CPF para atualização (sem validação de unicidade)
+const cpfSchemaForUpdate = z.string().nonempty("CPF é obrigatório").transform(validateAndFormatCPF);
+
 // Esquema de validação para criação de usuário
 export const createUserSchema = z.object({
   name: z.string().nonempty("Nome é obrigatório"),
-  cpf: cpfSchema,
-  email: emailSchema,
+  cpf: cpfSchemaForCreate,
+  email: emailSchemaForCreate,
   password: z.string().min(6, "Senha deve ter no mínimo 6 caracteres"),
 });
 
 // Esquema de validação para atualização de usuário
 export const updateUserSchema = z.object({
   name: z.string().nonempty("Nome é obrigatório"),
-  cpf: cpfSchema,
-  email: emailSchema,
+  cpf: cpfSchemaForUpdate,
+  email: emailSchemaForUpdate,
   password: z.string().min(6, "Senha deve ter no mínimo 6 caracteres"),
 });

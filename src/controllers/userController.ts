@@ -8,13 +8,20 @@ export const getAll = async (req: Request, res: Response) => {
   res.send(users);
 };
 
-export const getUserById = async (
-  req: Request<{ id: string }>,
-  res: Response
-) => {
-  const user = await UserModel.findByPk(req.params.id);
-  return res.json(user);
+export const getUserById = async (req: Request<{ id: string }>, res: Response) => {
+  try {
+    const user = await UserModel.findByPk(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "User não encontrado" });
+    }
+    return res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json("Erro do Servidor Interno" + error);
+  }
 };
+
+
+
 
 export const createUser = async (req: Request, res: Response) => {
   try {
@@ -57,18 +64,15 @@ export const updateUser = async (
   }
 };
 
-export const deleteUserById = async (
-  req: Request<{ id: string }>,
-  res: Response
-) => {
+export const deleteUserById = async (req: Request<{ id: string }>, res: Response) => {
   try {
     const user = await UserModel.findByPk(req.params.id);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "Usuário não encontrado" });
     }
     await user.destroy();
-    res.status(204).send();
+    res.status(200).json({ message: "Usuário deletado com sucesso" });
   } catch (error) {
-    res.status(500).json("Internal server error" + error);
+    res.status(500).json("Erro do Servidor Interno" + error);
   }
 };

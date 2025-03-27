@@ -106,6 +106,7 @@ paths:
       responses:
         '204':
           description: Usuário excluído com sucesso.
+          
         '404':
           description: Usuário não encontrado.
 
@@ -576,11 +577,8 @@ components:
           type: string
           example: "1"
         user_id:
-          type: string
-          example: "1"
-        item_id:
-          type: string
-          example: "1"
+          type: integer
+          example: 1
         name:
           type: string
           example: "Nome do Favorito"

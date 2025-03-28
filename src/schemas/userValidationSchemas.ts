@@ -8,7 +8,6 @@ const validateAndFormatCPF = (cpf: string): string => {
   if (cleanedCPF.length !== 11) {
     throw new Error("Formato de CPF Inválido");
   }
-
   const isValidCPF = (cpf: string): boolean => {
     let sum;
     let remainder;

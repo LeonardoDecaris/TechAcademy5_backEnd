@@ -4,80 +4,96 @@ import ItemModel from "../models/ItemModel";
 import { createFavoriteSchema, updateFavoriteSchema } from "../schemas/favoritesValidationSchemas";
 import { z } from "zod";
 
-export const getAll = async (req: Request, res: Response) => {
+const collections: { id: number; name: string }[] = [];
+
+// Método para criar uma nova coleção
+export const getPost = async (req: Request, res: Response): Promise<void> => {
+    const { name, itemIds } = req.body; // `bookIds` é um array de IDs de livros
+
+    if (!name) {
+        res.status(400).json({ message: 'O campo "name" é obrigatório.' });
+        return;
+    }
+
+    try {
+        // Cria a coleção
+        const newCollection = await FavoritesModel.create({ name });
+
+        // Verifica se há livros para associar
+        if (itemIds && Array.isArray(itemIds)) {
+            // Busca os livros pelo array de IDs
+            const items = await ItemModel.findAll({
+                where: {
+                    id: itemIds,
+                },
+            });
+
+            if (items.length === 0) {
+                res.status(404).json({ message: 'Nenhum livro encontrado com os IDs fornecidos.' });
+                return;
+            }
+
+            // Associa os livros à coleção
+            await newCollection.addItems(items);
+        }
+
+        // Retorna a coleção criada com os livros associados
+        const favoriteWithItems = await FavoritesModel.findByPk(newCollection.id, {
+            include: [{ model: ItemModel, as: 'items' }],
+        });
+
+        res.status(201).json({
+            message: 'Coleção criada com sucesso.',
+            collection: favoriteWithItems,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Erro ao criar a coleção.' });
+    }
+};
+
+export const getAll = async (req: Request, res: Response): Promise<void> => {
   try {
+    // Busca todos os favoritos no banco de dados, incluindo os itens associados
     const favorites = await FavoritesModel.findAll({
-      include: [
-        {
-          model: ItemModel,
-          as: "items",
-          through: { attributes: [] }, // Exclui os dados da tabela intermediária
-        },
-      ],
+      include: [{ model: ItemModel, as: "items" }],
     });
+
     res.status(200).json(favorites);
   } catch (error) {
-    console.error("Erro ao buscar favoritos:", error); // Adicione este log
+    console.error("Erro ao buscar favoritos:", error);
     res.status(500).json({ error: "Erro ao buscar favoritos", details: error });
   }
 };
 
-export const createFavorite = async (req: Request, res: Response) => {
-  try {
-    const parsedData = await createFavoriteSchema.parseAsync(req.body);
 
-    // Certifique-se de que o user_id está vindo do token decodificado
-    const userId = req.user?.id;
-    if (!userId) {
-      return res.status(401).json({ error: "Usuário não autenticado" });
-    }
 
-    console.log("Dados recebidos:", parsedData);
-    console.log("Usuário autenticado:", userId);
 
-    if (!Array.isArray(parsedData.items) || !parsedData.items.every(id => typeof id === "number")) {
-      return res.status(400).json({ error: "O campo 'items' deve ser um array de IDs numéricos" });
-    }
 
-    // Cria o favorito
-    const favorite = await FavoritesModel.create({
-      name: parsedData.name,
-      user_id: userId,
-    });
 
-    // Associa os itens, se fornecidos
-    if (parsedData.items && parsedData.items.length > 0) {
-      const items = await ItemModel.findAll({
-        where: {
-          id: parsedData.items, // Busca todos os itens com IDs correspondentes
-        },
-      });
 
-      if (items.length !== parsedData.items.length) {
-        return res.status(400).json({ error: "Um ou mais itens não foram encontrados" });
-      }
 
-      console.log("IDs dos itens recebidos:", parsedData.items);
-      console.log("Itens encontrados no banco de dados:", items);
-      console.log("Itens encontrados:", items);
 
-      // Cria a ligação na tabela associativa
-      await favorite.addItems(items);
-    }
 
-    const favoriteWithItems = await FavoritesModel.findByPk(favorite.id, {
-      include: [{ model: ItemModel, as: "items" }],
-    });
 
-    res.status(201).json(favoriteWithItems);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors });
-    }
-    console.error("Erro ao criar favorito:", error);
-    res.status(500).json({ error: "Erro ao criar favorito", details: error });
-  }
-};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 export const deleteFavoriteById = async (req: Request<{ id: string }>, res: Response) => {
   try {

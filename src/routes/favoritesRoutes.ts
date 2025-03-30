@@ -1,11 +1,11 @@
 import express from "express";
-import { getAll, createFavorite, deleteFavoriteById} from "../controllers/favoritesController";
+import { getAll, getPost, deleteFavoriteById} from "../controllers/favoritesController";
 
 const router = express.Router();
 
 // Removendo o middleware `authMiddleware` para permitir acesso sem autenticação
 router.get("/favorites", getAll);
-router.post("/favorites", createFavorite);
+router.post("/favorites", getPost);
 router.delete("/favorites/:id", deleteFavoriteById);
 
 // DOCUMETACAO SWAGGER
@@ -16,14 +16,20 @@ router.delete("/favorites/:id", deleteFavoriteById);
  *   get:
  *     summary: Retorna todos os favoritos
  *     responses:
- *       200:
- *         description: Lista de favoritos
- *       500:
+ *       '200':
+ *         description: Lista de favoritos retornada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Favorite'
+ *       '500':
  *         description: Erro de servidor
  *   post:
- *     summary: Adiciona um novo favorito
+ *     summary: Cria um novo favorito
  *     requestBody:
- *       description: Dados do favorito
+ *       description: Dados do novo favorito
  *       required: true
  *       content:
  *         application/json:
@@ -34,10 +40,6 @@ router.delete("/favorites/:id", deleteFavoriteById);
  *                 type: string
  *                 description: Nome do favorito
  *                 example: "Meu Favorito"
- *               user_id:
- *                 type: integer
- *                 description: ID do usuário associado ao favorito
- *                 example: 1
  *               items:
  *                 type: array
  *                 items:
@@ -45,12 +47,18 @@ router.delete("/favorites/:id", deleteFavoriteById);
  *                 description: IDs dos itens associados ao favorito
  *                 example: [1, 2, 3]
  *     responses:
- *       201:
- *         description: Favorito adicionado com sucesso
- *       400:
- *         description: Comando inválido
- *       500:
- *         description: Erro de servidor
+ *       '201':
+ *         description: Favorito criado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FavoriteWithItems'
+ *       '400':
+ *         description: Requisição inválida
+ *       '404':
+ *         description: Nenhum item encontrado com os IDs fornecidos
+ *       '500':
+ *         description: Erro ao criar o favorito
  * /favorites/{id}:
  *   delete:
  *     summary: Remove um favorito pelo ID
@@ -59,15 +67,68 @@ router.delete("/favorites/:id", deleteFavoriteById);
  *         name: id
  *         required: true
  *         schema:
- *           type: string
- *         description: ID do favorito
+ *           type: integer
+ *         description: ID do favorito a ser removido
  *     responses:
- *       204:
+ *       '200':
  *         description: Favorito removido com sucesso
- *       404:
+ *       '404':
  *         description: Favorito não encontrado
- *       500:
- *         description: Erro de servidor
+ *       '500':
+ *         description: Erro ao remover o favorito
+ */
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     Favorite:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         name:
+ *           type: string
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ *     FavoriteWithItems:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         name:
+ *           type: string
+ *         items:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/Item'
+ *     Item:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         name:
+ *           type: string
+ *         time:
+ *           type: integer
+ *         directory:
+ *           type: string
+ *         image:
+ *           type: string
+ *         category_id:
+ *           type: integer
+ *         author_id:
+ *           type: integer
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
  */
 
 export default router;

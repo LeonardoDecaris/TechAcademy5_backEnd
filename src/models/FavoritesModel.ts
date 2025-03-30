@@ -1,20 +1,28 @@
-import { Model, DataTypes, Association } from "sequelize";
+import { Model, DataTypes, Optional } from "sequelize";
 import sequelize from "../config/database";
 import ItemModel from "./ItemModel";
 
-class FavoritesModel extends Model {
+interface FavoritesAttributes {
+  id: number;
+  name: string;
+}
+
+interface FavoritesCreationAttributes extends Optional<FavoritesAttributes, 'id'> {}
+
+class FavoritesModel extends Model<FavoritesAttributes, FavoritesCreationAttributes> {
   public id!: number;
   public name!: string;
-  public user_id!: number;
 
-  // Association methods
-  public addItems!: (items: ItemModel[] | number[]) => Promise<void>;
-
-  // Define associations
-  public static associations: {
-    items: Association<FavoritesModel, ItemModel>;
-  };
+  // Métodos gerados pelo Sequelize para associações
+  public addItems!: (items: ItemModel[] | ItemModel) => Promise<void>;
+  public getItems!: () => Promise<ItemModel[]>;
+  public setItems!: (items: ItemModel[] | ItemModel) => Promise<void>;
+  public removeItems!: (items: ItemModel[] | ItemModel) => Promise<void>;
 }
+
+
+
+
 
 FavoritesModel.init(
   {
@@ -25,10 +33,6 @@ FavoritesModel.init(
     },
     name: {
       type: DataTypes.STRING,
-      allowNull: false,
-    },
-    user_id: {
-      type: DataTypes.INTEGER,
       allowNull: false,
     },
   },

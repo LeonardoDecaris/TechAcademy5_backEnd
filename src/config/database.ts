@@ -1,8 +1,24 @@
-import { Sequelize } from "sequelize";
+import { Sequelize } from 'sequelize'
+const isTest = process.env.NODE_ENV === 'test'
 
-const sequelize = new Sequelize("harmonicsound_homolog", "root", "", {
-  host: "localhost",
-  dialect: "mysql",
-});
+const sequelize = new Sequelize(
+    isTest ? 'harmonicsound_homolog2' : 'harmonicsound_homolog',
+    'root',
+    '',
+    {
+        host: 'localhost',
+        dialect: 'mysql',
+        logging: !isTest
+    }
+);
 
-export default sequelize;
+(async () => {
+    try {
+        await sequelize.sync({ alter: true }); // Use { force: true } para recriar as tabelas (cuidado com perda de dados)
+        console.log('Banco de dados sincronizado.');
+    } catch (error) {
+        console.error('Erro ao sincronizar o banco de dados:', error);
+    }
+})();
+
+export default sequelize

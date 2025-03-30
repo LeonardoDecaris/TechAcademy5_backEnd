@@ -591,9 +591,6 @@ components:
         name:
           type: string
           example: "Meu Favorito"
-        user_id:
-          type: integer
-          example: 1
         items:
           type: array
           items:

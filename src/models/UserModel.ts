@@ -66,13 +66,4 @@ UserModel.beforeUpdate(async (user: UserModel) => {
   }
 });
 
-UserModel.hasMany(FavoritesModel, {
-  foreignKey: "user_id",
-  as: "favorites",
-});
-FavoritesModel.belongsTo(UserModel, {
-  foreignKey: "user_id",
-  as: "user",
-});
-
 export default UserModel;

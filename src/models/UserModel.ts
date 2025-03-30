@@ -66,18 +66,6 @@ UserModel.beforeUpdate(async (user: UserModel) => {
   }
 });
 
-UserModel.belongsToMany(ItemModel, {
-  through: "users_item",
-  foreignKey: "user_id",
-  as: "item",
-});
-
-ItemModel.belongsToMany(UserModel, {
-  through: "users_item",
-  foreignKey: "item_id",
-  as: "users",
-});
-
 UserModel.hasMany(FavoritesModel, {
   foreignKey: "user_id",
   as: "favorites",

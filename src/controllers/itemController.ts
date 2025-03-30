@@ -48,7 +48,6 @@ export const updateItem = async (req: Request<{ id: string }>, res: Response) =>
     item.directory = parsedData.directory;
     item.image = parsedData.image;
     item.category_id = parsedData.category_id;
-    item.favorites_id = parsedData.favorites_id !== null ? parsedData.favorites_id : undefined;
     item.author_id = parsedData.author_id;
 
     await item.save();

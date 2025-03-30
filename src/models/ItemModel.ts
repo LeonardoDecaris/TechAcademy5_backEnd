@@ -11,7 +11,7 @@ class ItemModel extends Model{
     directory: string | undefined
     image: string | undefined
     category_id: number | undefined
-    favorites_id: number | undefined
+    
     author_id: number | undefined
 }
 
@@ -42,10 +42,6 @@ ItemModel.init(
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        favorites_id:{
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
         author_id:{
             type: DataTypes.INTEGER,
             allowNull: false
@@ -66,15 +62,6 @@ AuthorModel.hasMany(ItemModel, {
     foreignKey: "author_id",
     as: "items"
 });
-
-ItemModel.belongsTo(FavoritesModel, {
-    foreignKey: 'favorites_id', 
-    as: 'favorite'
-})
-FavoritesModel.hasMany(ItemModel, {
-    foreignKey: 'favorites_id',
-    as: 'item'
-})
 
 ItemModel.belongsTo(CategoryModel, {
     foreignKey: "category_id",

@@ -5,9 +5,7 @@ import { authMiddleware } from '../middleware/authMiddleware'
 const router = express.Router();
 
 router.get("/favorites", authMiddleware, getAll);
-router.get("/favorites/:id", authMiddleware, getFavoriteById);
 router.post("/favorites", authMiddleware, createFavorite);
-router.put("/favorites/:id", authMiddleware, updateFavorite);
 router.delete("/favorites/:id", authMiddleware, deleteFavoriteById);
 
 // DOCUMETACAO SWAGGER
@@ -30,7 +28,22 @@ router.delete("/favorites/:id", authMiddleware, deleteFavoriteById);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Favorite'
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Nome do favorito
+ *                 example: "Meu Favorito"
+ *               user_id:
+ *                 type: integer
+ *                 description: ID do usuário associado ao favorito
+ *                 example: 1
+ *               items:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 description: IDs dos itens associados ao favorito
+ *                 example: [1, 2, 3]
  *     responses:
  *       201:
  *         description: Favorito adicionado com sucesso

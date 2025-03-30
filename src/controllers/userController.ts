@@ -16,7 +16,7 @@ export const getUserById = async (req: Request<{ id: string }>, res: Response) =
     }
     return res.status(200).json(user);
   } catch (error) {
-    res.status(500).json("Erro do Servidor Interno" + error);
+    res.status(500).json("Erro do Servidor Interno: " + error);
   }
 };
 
@@ -33,7 +33,13 @@ export const createUser = async (req: Request, res: Response) => {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: error.errors });
     }
-    res.status(500).json("Erro do Servidor Interno" + error);
+
+    // Captura erros de validação de CPF ou outros erros
+    if (error instanceof Error) {
+      return res.status(400).json({ error: error.message });
+    }
+
+    res.status(500).json({ error: "Erro interno do servidor" });
   }
 };
 
@@ -60,7 +66,7 @@ export const updateUser = async (
     if (error instanceof z.ZodError) {
       return res.status(400).json({ message: error.errors });
     }
-    res.status(500).json("Internal server error" + error);
+    res.status(500).json("Internal server error: " + error);
   }
 };
 
@@ -73,6 +79,6 @@ export const deleteUserById = async (req: Request<{ id: string }>, res: Response
     await user.destroy();
     res.status(200).json({ message: "Usuário deletado com sucesso" });
   } catch (error) {
-    res.status(500).json("Erro do Servidor Interno" + error);
+    res.status(500).json("Erro do Servidor Interno: " + error);
   }
 };

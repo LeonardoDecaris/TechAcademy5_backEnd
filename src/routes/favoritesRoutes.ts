@@ -1,11 +1,11 @@
 import express from "express";
-import { getAll, getPost, deleteFavoriteById} from "../controllers/favoritesController";
+import { getAll, createFavorite, deleteFavoriteById} from "../controllers/favoritesController";
 
 const router = express.Router();
 
 // Removendo o middleware `authMiddleware` para permitir acesso sem autenticação
 router.get("/favorites", getAll);
-router.post("/favorites", getPost);
+router.post("/favorites", createFavorite);
 router.delete("/favorites/:id", deleteFavoriteById);
 
 // DOCUMETACAO SWAGGER

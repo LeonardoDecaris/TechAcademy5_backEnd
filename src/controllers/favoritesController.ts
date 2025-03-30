@@ -7,8 +7,8 @@ import { z } from "zod";
 const collections: { id: number; name: string }[] = [];
 
 // Método para criar uma nova coleção
-export const getPost = async (req: Request, res: Response): Promise<void> => {
-    const { name, itemIds } = req.body; // `bookIds` é um array de IDs de livros
+export const createFavorite = async (req: Request, res: Response): Promise<void> => {
+    const { name, items } = req.body; // `items` é um array de IDs de itens
 
     if (!name) {
         res.status(400).json({ message: 'O campo "name" é obrigatório.' });
@@ -16,39 +16,39 @@ export const getPost = async (req: Request, res: Response): Promise<void> => {
     }
 
     try {
-        // Cria a coleção
-        const newCollection = await FavoritesModel.create({ name });
+        // Cria o favorito
+        const newFavorite = await FavoritesModel.create({ name });
 
-        // Verifica se há livros para associar
-        if (itemIds && Array.isArray(itemIds)) {
-            // Busca os livros pelo array de IDs
-            const items = await ItemModel.findAll({
+        // Verifica se há itens para associar
+        if (items && Array.isArray(items)) {
+            // Busca os itens pelo array de IDs
+            const foundItems = await ItemModel.findAll({
                 where: {
-                    id: itemIds,
+                    id: items,
                 },
             });
 
-            if (items.length === 0) {
-                res.status(404).json({ message: 'Nenhum livro encontrado com os IDs fornecidos.' });
+            if (foundItems.length === 0) {
+                res.status(404).json({ message: 'Nenhum item encontrado com os IDs fornecidos.' });
                 return;
             }
 
-            // Associa os livros à coleção
-            await newCollection.addItems(items);
+            // Associa os itens ao favorito
+            await newFavorite.addItems(foundItems);
         }
 
-        // Retorna a coleção criada com os livros associados
-        const favoriteWithItems = await FavoritesModel.findByPk(newCollection.id, {
+        // Retorna o favorito criado com os itens associados
+        const favoriteWithItems = await FavoritesModel.findByPk(newFavorite.id, {
             include: [{ model: ItemModel, as: 'items' }],
         });
 
         res.status(201).json({
-            message: 'Coleção criada com sucesso.',
-            collection: favoriteWithItems,
+            message: 'Favorito criado com sucesso.',
+            favorite: favoriteWithItems,
         });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Erro ao criar a coleção.' });
+        res.status(500).json({ message: 'Erro ao criar o favorito.' });
     }
 };
 

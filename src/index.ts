@@ -1,5 +1,6 @@
 // filepath: src/index.ts
 import express from "express";
+import cors from "cors"; // Importa o pacote CORS
 import sequelize from "./config/database";
 import authorRoutes from './routes/authorRoutes';
 import categoryRoutes from './routes/categoryRoutes';
@@ -12,6 +13,9 @@ import swaggerSpec from "./config/swaggerConfig";
 
 const app = express();
 const port = 3000;
+
+// Configura o CORS
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

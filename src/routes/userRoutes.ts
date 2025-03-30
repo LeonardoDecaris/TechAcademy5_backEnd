@@ -28,9 +28,9 @@ router.delete("/users/:id", authMiddleware, deleteUserById);
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/User'
-  *       401:
- *         description: Nao Autorizado
- *        500:
+ *       '401':
+ *         description: Não autorizado
+ *       '500':
  *         description: Erro de servidor
  */
 

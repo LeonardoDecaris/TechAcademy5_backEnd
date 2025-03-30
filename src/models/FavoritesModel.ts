@@ -1,33 +1,44 @@
-import { DataTypes, Model } from "sequelize";
+import { Model, DataTypes, Association } from "sequelize";
 import sequelize from "../config/database";
 import ItemModel from "./ItemModel";
 
 class FavoritesModel extends Model {
-    id: number | undefined;
-    name: string | undefined;
-    user_id: number | undefined;
+  public id!: number;
+  public name!: string;
+  public user_id!: number;
+
+  // Association methods
+  public addItems!: (items: ItemModel[] | number[]) => Promise<void>;
+
+  // Define associations
+  public static associations: {
+    items: Association<FavoritesModel, ItemModel>;
+  };
 }
 
 FavoritesModel.init(
-    {
-        id: {
-            type: DataTypes.INTEGER,
-            autoIncrement: true,
-            primaryKey: true
-        },
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
     },
-    {
-        sequelize,
-        modelName: "FavoritesModel",
-        tableName: "favorites"
-    }
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+  },
+  {
+    sequelize,
+    modelName: "Favorites",
+  }
 );
 
-// Configuração da associação muitos-para-muitos
+// Define associations
 FavoritesModel.belongsToMany(ItemModel, {
   through: "favorites_item", // Nome da tabela intermediária
   foreignKey: "favorite_id", // Chave estrangeira que referencia a tabela de favoritos

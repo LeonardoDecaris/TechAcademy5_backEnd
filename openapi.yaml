@@ -250,6 +250,8 @@ paths:
       tags:
         - Favorites
       summary: Adiciona um novo favorito
+      security:
+        - bearerAuth: []
       requestBody:
         description: Dados do favorito
         required: true
@@ -262,10 +264,6 @@ paths:
                   type: string
                   description: Nome do favorito
                   example: "Meu Favorito"
-                user_id:
-                  type: integer
-                  description: ID do usuário associado ao favorito
-                  example: 1
                 items:
                   type: array
                   items:

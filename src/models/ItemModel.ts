@@ -11,7 +11,6 @@ class ItemModel extends Model{
     directory: string | undefined
     image: string | undefined
     category_id: number | undefined
-    
     author_id: number | undefined
 }
 

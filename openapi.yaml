@@ -236,24 +236,30 @@ paths:
 
   /favorites:
     get:
+      summary: Retorna todos os favoritos
       tags:
         - Favorites
-      summary: Retorna todos os favoritos
       security:
         - bearerAuth: []
       responses:
         '200':
-          description: Lista de favoritos
+          description: Lista de favoritos retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Favorite'
         '500':
           description: Erro de servidor
     post:
+      summary: Cria um novo favorito
       tags:
         - Favorites
-      summary: Adiciona um novo favorito
       security:
         - bearerAuth: []
       requestBody:
-        description: Dados do favorito
+        description: Dados do novo favorito
         required: true
         content:
           application/json:
@@ -272,17 +278,87 @@ paths:
                   example: [1, 2, 3]
       responses:
         '201':
-          description: Favorito adicionado com sucesso
+          description: Favorito criado com sucesso
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Favorite'
+                $ref: '#/components/schemas/FavoriteWithItems'
         '400':
-          description: Comando inválido
+          description: Requisição inválida
+        '404':
+          description: Nenhum item encontrado com os IDs fornecidos
         '500':
-          description: Erro de servidor
+          description: Erro ao criar o favorito
 
   /favorites/{id}:
+    get:
+      summary: Retorna um favorito pelo ID
+      tags:
+        - Favorites
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID do favorito a ser retornado
+      responses:
+        '200':
+          description: Favorito retornado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FavoriteWithItems'
+        '404':
+          description: Favorito não encontrado
+        '500':
+          description: Erro ao retornar o favorito
+    put:
+      summary: Atualiza um favorito pelo ID
+      tags:
+        - Favorites
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID do favorito a ser atualizado
+      requestBody:
+        description: Dados do favorito a ser atualizado
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Nome do favorito
+                  example: "Meu Favorito Atualizado"
+                items:
+                  type: array
+                  items:
+                    type: integer
+                  description: IDs dos itens associados ao favorito
+                  example: [1, 2, 3]
+      responses:
+        '200':
+          description: Favorito atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FavoriteWithItems'
+        '400':
+          description: Requisição inválida
+        '404':
+          description: Favorito não encontrado
+        '500':
+          description: Erro ao atualizar o favorito
     delete:
       tags:
         - Favorites
@@ -562,46 +638,49 @@ components:
       type: object
       properties:
         id:
-          type: string
-          example: "1"
+          type: integer
         name:
           type: string
-          example: "Item 1"
         time:
-          type: string
-          example: "03:45"
+          type: integer
         directory:
           type: string
-          example: "path/to/directory"
         image:
           type: string
-          example: "path/to/image"
         category_id:
           type: integer
-          example: 1
         author_id:
           type: integer
-          example: 1
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
     Favorite:
       type: object
       properties:
         id:
           type: integer
-          example: 1
         name:
           type: string
-          example: "Meu Favorito"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    FavoriteWithItems:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
         items:
           type: array
           items:
-            type: object
-            properties:
-              id:
-                type: integer
-                example: 1
-              name:
-                type: string
-                example: "Item 1"
+            $ref: '#/components/schemas/Item'
     Category:
       type: object
       properties:

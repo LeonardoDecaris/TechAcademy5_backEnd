@@ -66,34 +66,76 @@ export const getAll = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+export const getFavoriteById = async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+    const { id } = req.params;
 
+    try {
+        // Busca o favorito pelo ID, incluindo os itens associados
+        const favorite = await FavoritesModel.findByPk(id, {
+            include: [{ model: ItemModel, as: "items" }],
+        });
 
+        if (!favorite) {
+            res.status(404).json({ message: "Favorito não encontrado." });
+            return;
+        }
 
+        res.status(200).json(favorite);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Erro ao buscar o favorito." });
+    }
+};
 
+export const updateFavorite = async (req: Request<{ id: string }>, res: Response): Promise<void> => {
+    const { name, items } = req.body; // `items` é um array de IDs de itens
+    const { id } = req.params;
 
+    try {
+        // Busca o favorito pelo ID
+        const favorite = await FavoritesModel.findByPk(id);
+        if (!favorite) {
+            res.status(404).json({ message: "Favorito não encontrado." });
+            return;
+        }
 
+        // Atualiza o nome do favorito, se fornecido
+        if (name) {
+            favorite.name = name;
+            await favorite.save();
+        }
 
+        // Atualiza os itens associados, se fornecidos
+        if (items && Array.isArray(items)) {
+            const foundItems = await ItemModel.findAll({
+                where: {
+                    id: items,
+                },
+            });
 
+            if (foundItems.length === 0) {
+                res.status(404).json({ message: "Nenhum item encontrado com os IDs fornecidos." });
+                return;
+            }
 
+            // Atualiza a associação de itens
+            await favorite.setItems(foundItems);
+        }
 
+        // Retorna o favorito atualizado com os itens associados
+        const updatedFavorite = await FavoritesModel.findByPk(id, {
+            include: [{ model: ItemModel, as: "items" }],
+        });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        res.status(200).json({
+            message: "Favorito atualizado com sucesso.",
+            favorite: updatedFavorite,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Erro ao atualizar o favorito." });
+    }
+};
 
 export const deleteFavoriteById = async (req: Request<{ id: string }>, res: Response) => {
   try {

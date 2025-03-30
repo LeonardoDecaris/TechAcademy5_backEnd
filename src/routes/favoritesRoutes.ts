@@ -1,5 +1,5 @@
 import express from "express";
-import { getAll, createFavorite, deleteFavoriteById} from "../controllers/favoritesController";
+import { getAll, createFavorite, deleteFavoriteById, getFavoriteById, updateFavorite } from "../controllers/favoritesController";
 
 const router = express.Router();
 
@@ -7,6 +7,8 @@ const router = express.Router();
 router.get("/favorites", getAll);
 router.post("/favorites", createFavorite);
 router.delete("/favorites/:id", deleteFavoriteById);
+router.get("/favorites/:id", getFavoriteById);
+router.put("/favorites/:id", updateFavorite);
 
 // DOCUMETACAO SWAGGER
 
@@ -76,6 +78,66 @@ router.delete("/favorites/:id", deleteFavoriteById);
  *         description: Favorito não encontrado
  *       '500':
  *         description: Erro ao remover o favorito
+ *   get:
+ *     summary: Retorna um favorito pelo ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID do favorito a ser retornado
+ *     responses:
+ *       '200':
+ *         description: Favorito retornado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FavoriteWithItems'
+ *       '404':
+ *         description: Favorito não encontrado
+ *       '500':
+ *         description: Erro ao retornar o favorito
+ *   put:
+ *     summary: Atualiza um favorito pelo ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID do favorito a ser atualizado
+ *     requestBody:
+ *       description: Dados do favorito a ser atualizado
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Nome do favorito
+ *                 example: "Meu Favorito Atualizado"
+ *               items:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 description: IDs dos itens associados ao favorito
+ *                 example: [1, 2, 3]
+ *     responses:
+ *       '200':
+ *         description: Favorito atualizado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/FavoriteWithItems'
+ *       '400':
+ *         description: Requisição inválida
+ *       '404':
+ *         description: Nenhum item encontrado com os IDs fornecidos
+ *       '500':
+ *         description: Erro ao atualizar o favorito
  */
 
 /**

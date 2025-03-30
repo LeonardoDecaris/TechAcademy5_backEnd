@@ -2,6 +2,9 @@ import { Model, DataTypes, Optional } from "sequelize";
 import sequelize from "../config/database";
 import ItemModel from "./ItemModel";
 
+
+
+
 interface FavoritesAttributes {
   id: number;
   name: string;

@@ -93,33 +93,46 @@ export const updateFavorite = async (req: Request<{ id: string }>, res: Response
 
     try {
         // Busca o favorito pelo ID
-        const favorite = await FavoritesModel.findByPk(id);
+        const favorite = await FavoritesModel.findByPk(id, {
+            include: [{ model: ItemModel, as: "items" }],
+        });
+
         if (!favorite) {
             res.status(404).json({ message: "Favorito não encontrado." });
             return;
         }
 
-        // Atualiza o nome do favorito, se fornecido
-        if (name) {
-            favorite.name = name;
-            await favorite.save();
-        }
+        // Adicione um tipo explícito para `favorite.items`
+        const currentItems = ((favorite as any).items || []).map((item: ItemModel) => item.id);
 
-        // Atualiza os itens associados, se fornecidos
-        if (items && Array.isArray(items)) {
-            const foundItems = await ItemModel.findAll({
+        // Determina os itens a serem adicionados e removidos
+        const itemsToAdd = items.filter((itemId: number) => !currentItems.includes(itemId));
+        const itemsToRemove = currentItems.filter((itemId: number) => !items.includes(itemId));
+
+        // Adiciona os novos itens
+        if (itemsToAdd.length > 0) {
+            const foundItemsToAdd = await ItemModel.findAll({
                 where: {
-                    id: items,
+                    id: itemsToAdd,
                 },
             });
 
-            if (foundItems.length === 0) {
-                res.status(404).json({ message: "Nenhum item encontrado com os IDs fornecidos." });
-                return;
+            if (foundItemsToAdd.length > 0) {
+                await favorite.addItems(foundItemsToAdd);
             }
+        }
 
-            // Atualiza a associação de itens
-            await favorite.setItems(foundItems);
+        // Remove os itens que não estão mais associados
+        if (itemsToRemove.length > 0) {
+            const foundItemsToRemove = await ItemModel.findAll({
+                where: {
+                    id: itemsToRemove,
+                },
+            });
+
+            if (foundItemsToRemove.length > 0) {
+                await favorite.removeItems(foundItemsToRemove);
+            }
         }
 
         // Retorna o favorito atualizado com os itens associados

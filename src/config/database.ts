@@ -2,7 +2,7 @@ import { Sequelize } from 'sequelize'
 const isTest = process.env.NODE_ENV === 'test'
 
 const sequelize = new Sequelize(
-    isTest ? 'harmonicsound_homolog2' : 'harmonicsound_homolog',
+    isTest ? 'harmonicsound_test' : 'harmonicsound_homolog',
     'root',
     '',
     {

@@ -3,7 +3,7 @@ import UserModel from "../models/UserModel";
 import { createUserSchema, updateUserSchema } from "../schemas/userValidationSchemas";
 import { z } from "zod";
 
-export const getAll = async (req: Request, res: Response) => {
+export const getAllUsers = async (req: Request, res: Response) => {
   const users = await UserModel.findAll();
   res.send(users);
 };
@@ -20,8 +20,36 @@ export const getUserById = async (req: Request<{ id: string }>, res: Response) =
   }
 };
 
+export const getPaginatedUsers = async (req: Request, res: Response) => {
+  try {
+    const { page } = req.params; // Obtém o número da página do path parameter
+    const { limit = 10 } = req.query; // Obtém o limite dos query parameters (opcional)
 
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit as string, 10);
 
+    if (isNaN(pageNumber) || pageNumber <= 0 || isNaN(limitNumber) || limitNumber <= 0) {
+      return res.status(400).json({ message: 'Parâmetros de paginação inválidos.' });
+    }
+
+    const offset = (pageNumber - 1) * limitNumber;
+
+    const { rows: users, count: totalUsers } = await UserModel.findAndCountAll({
+      limit: limitNumber,
+      offset,
+    });
+
+    res.status(200).json({
+      currentPage: pageNumber,
+      totalPages: Math.ceil(totalUsers / limitNumber),
+      totalUsers,
+      users,
+    });
+  } catch (error) {
+    console.error('Erro ao buscar usuários paginados:', error);
+    res.status(500).json({ message: 'Erro ao buscar usuários paginados.' });
+  }
+};
 
 export const createUser = async (req: Request, res: Response) => {
   try {

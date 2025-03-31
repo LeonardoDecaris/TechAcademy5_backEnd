@@ -1,10 +1,12 @@
 import express from "express";
-import { getAll, getUserById, createUser, updateUser, deleteUserById } from "../controllers/userController";
+import { getAllUsers, getUserById, createUser, updateUser, deleteUserById, getPaginatedUsers } from "../controllers/userController";
 import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = express.Router();
 
-router.get("/users", getAll);
+router.get("/users", getAllUsers);
+router.get("/users/paginated", getPaginatedUsers); // Nova rota para paginação
+router.get('/users/paginated/:page', getPaginatedUsers); // Exemplo de rota no Express
 router.get("/users/:id", authMiddleware, getUserById);
 router.post("/users", createUser);
 router.put("/users/:id", authMiddleware, updateUser);
@@ -32,6 +34,62 @@ router.delete("/users/:id", authMiddleware, deleteUserById);
  *         description: Não autorizado
  *       '500':
  *         description: Erro de servidor
+ */
+
+// PAGINATED GET
+
+/**
+ * @openapi
+ * /users/paginated:
+ *   get:
+ *     tags:
+ *       - Users
+ *     summary: Lista usuários com paginação
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         required: false
+ *         schema:
+ *           type: integer
+ *         description: Número da página (padrão: 1).
+ *       - in: query
+ *         name: limit
+ *         required: false
+ *         schema:
+ *           type: integer
+ *         description: Número de usuários por página (padrão: 10).
+ *     responses:
+ *       '200':
+ *         description: Lista de usuários paginada retornada com sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 currentPage:
+ *                   type: integer
+ *                   description: Página atual.
+ *                   example: 1
+ *                 totalPages:
+ *                   type: integer
+ *                   description: Número total de páginas.
+ *                   example: 5
+ *                 totalUsers:
+ *                   type: integer
+ *                   description: Número total de usuários.
+ *                   example: 50
+ *                 users:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/User'
+ *       '400':
+ *         description: Parâmetros de paginação inválidos.
+ *       '401':
+ *         description: Não autorizado.
+ *       '500':
+ *         description: Erro de servidor.
  */
 
 //POST
@@ -155,6 +213,69 @@ router.delete("/users/:id", authMiddleware, deleteUserById);
  *         description: Usuario nao encontrado
  *       500:
  *         description: Erro de servidor
+ */
+
+/**
+ * @openapi
+ * /items/{id}:
+ *   put:
+ *     tags:
+ *       - Items
+ *     summary: Atualiza um item pelo ID
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID do item a ser atualizado
+ *     requestBody:
+ *       description: Dados atualizados do item
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Nome do item
+ *                 example: "Item Atualizado"
+ *               time:
+ *                 type: integer
+ *                 description: Tempo associado ao item
+ *                 example: 5
+ *               directory:
+ *                 type: string
+ *                 description: Caminho do diretório do item
+ *                 example: "path/to/directory"
+ *               image:
+ *                 type: string
+ *                 description: Caminho da imagem do item
+ *                 example: "path/to/image"
+ *               category_id:
+ *                 type: integer
+ *                 description: ID da categoria associada ao item
+ *                 example: 1
+ *               author_id:
+ *                 type: integer
+ *                 description: ID do autor associado ao item
+ *                 example: 2
+ *     responses:
+ *       '200':
+ *         description: Item atualizado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Item'
+ *       '400':
+ *         description: Requisição inválida
+ *       '404':
+ *         description: Item não encontrado
+ *       '500':
+ *         description: Erro ao atualizar o item
  */
 
 export default router;

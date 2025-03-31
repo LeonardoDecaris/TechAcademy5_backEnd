@@ -110,6 +110,11 @@ paths:
         '404':
           description: Usuário não encontrado.
 
+
+
+
+
+
   /login:
     post:
       tags:
@@ -639,18 +644,25 @@ components:
       properties:
         id:
           type: integer
+          example: "1"
         name:
           type: string
+          example: "Meu Item"
         time:
-          type: integer
+          type: string
+          example: "03:15"
         directory:
           type: string
+          example: "path/to/directory"
         image:
           type: string
+          example: "path/to/image"
         category_id:
           type: integer
+          example: "1"
         author_id:
           type: integer
+          example: "1"
         createdAt:
           type: string
           format: date-time
@@ -662,8 +674,10 @@ components:
       properties:
         id:
           type: integer
+          example: "1"
         name:
           type: string
+          example: "Meu Favorito"
         createdAt:
           type: string
           format: date-time
@@ -675,10 +689,13 @@ components:
       properties:
         id:
           type: integer
+          example: "1"
         name:
           type: string
+          example: "Meu Favorito"
         items:
           type: array
+          example: [1, 2]
           items:
             $ref: '#/components/schemas/Item'
     Category:

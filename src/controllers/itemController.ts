@@ -72,3 +72,47 @@ export const deleteItemById = async (req: Request<{ id: string }>, res: Response
     res.status(500).json("Internal server error" + error);
   }
 };
+
+
+export const getPaginatedItems = async (req: Request<{ page: string }>, res: Response) => {
+  try {
+    const { page } = req.params; // Obtém o número da página do path parameter
+    const { limit = 10 } = req.query; // Obtém o limite dos query parameters (opcional)
+
+    // Converte os parâmetros para números
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit as string, 10);
+
+    if (isNaN(pageNumber) || pageNumber <= 0 || isNaN(limitNumber) || limitNumber <= 0) {
+      return res.status(400).json({ message: "Parâmetros de paginação inválidos." });
+    }
+
+    // Calcula o offset
+    const offset = (pageNumber - 1) * limitNumber;
+
+    // Busca os itens com paginação
+    const { rows: items, count: totalItems } = await ItemModel.findAndCountAll({
+      limit: limitNumber,
+      offset,
+    });
+
+    // Calcula o número total de páginas
+    const totalPages = Math.ceil(totalItems / limitNumber);
+
+    // Verifica se a página solicitada existe
+    if (pageNumber > totalPages) {
+      return res.status(404).json({ message: `Página ${pageNumber} não existe. Total de páginas: ${totalPages}.` });
+    }
+
+    // Retorna os itens paginados e informações adicionais
+    res.status(200).json({
+      currentPage: pageNumber,
+      totalPages,
+      totalItems,
+      items,
+    });
+  } catch (error) {
+    console.error("Erro ao buscar itens paginados:", error);
+    res.status(500).json({ message: "Erro ao buscar itens paginados.", details: error });
+  }
+};

@@ -2,19 +2,67 @@ import { Request, Response } from "express";
 import ItemModel from "../models/ItemModel";
 import { createItemSchema, updateItemSchema } from "../schemas/itemValidationSchemas";
 import { z } from "zod";
+import AuthorModel from "../models/AuthorModel";
+import CategoryModel from "../models/CategoryModel";
 
 export const getAll = async (req: Request, res: Response) => {
-  const items = await ItemModel.findAll();
-  res.send(items);
+  try {
+    const items = await ItemModel.findAll({
+      include: [
+        {
+          model: CategoryModel,
+          as: "category",
+          attributes: ["id", "name"], // Campos que deseja retornar
+        },
+        {
+          model: AuthorModel,
+          as: "author",
+          attributes: ["id", "name"], // Campos que deseja retornar
+        },
+      ],
+    });
+
+    const formattedItems = items.map((item) => ({
+      ...item.toJSON(),
+      category_id: item.category ? [item.category] : [],
+      author_id: item.author ? [item.author] : [],
+    }));
+
+    res.status(200).json(formattedItems);
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao buscar itens.", details: error });
+  }
 };
 
 export const getItemById = async (req: Request<{ id: string }>, res: Response) => {
   try {
-    const item = await ItemModel.findByPk(req.params.id);
+    const item = await ItemModel.findByPk(req.params.id, {
+      include: [
+        {
+          model: CategoryModel,
+          as: "category",
+          attributes: ["id", "name"], // Campos que deseja retornar
+        },
+        {
+          model: AuthorModel,
+          as: "author",
+          attributes: ["id", "name"], // Campos que deseja retornar
+        },
+      ],
+    });
+
     if (!item) {
       return res.status(404).json({ message: "Item não encontrado" });
     }
-    return res.status(200).json(item);
+
+    // Ajusta o formato do retorno para incluir os dados de categoria e autor
+    const formattedItem = {
+      ...item.toJSON(),
+      category_id: item.category ? [item.category] : [],
+      author_id: item.author ? [item.author] : [],
+    };
+
+    return res.status(200).json(formattedItem);
   } catch (error) {
     res.status(500).json("Erro do Servidor Interno" + error);
   }
@@ -73,7 +121,6 @@ export const deleteItemById = async (req: Request<{ id: string }>, res: Response
   }
 };
 
-
 export const getPaginatedItems = async (req: Request<{ page: string }>, res: Response) => {
   try {
     const { page } = req.params;
@@ -91,7 +138,25 @@ export const getPaginatedItems = async (req: Request<{ page: string }>, res: Res
     const { rows: items, count: totalItems } = await ItemModel.findAndCountAll({
       limit: limitNumber,
       offset,
+      include: [
+        {
+          model: CategoryModel,
+          as: "category",
+          attributes: ["id", "name"], // Campos que deseja retornar
+        },
+        {
+          model: AuthorModel,
+          as: "author",
+          attributes: ["id", "name"], // Campos que deseja retornar
+        },
+      ],
     });
+
+    const formattedItems = items.map((item) => ({
+      ...item.toJSON(),
+      category_id: item.category ? [item.category] : [],
+      author_id: item.author ? [item.author] : [],
+    }));
 
     const totalPages = Math.ceil(totalItems / limitNumber);
 
@@ -103,7 +168,7 @@ export const getPaginatedItems = async (req: Request<{ page: string }>, res: Res
       currentPage: pageNumber,
       totalPages,
       totalItems,
-      items,
+      items: formattedItems,
     });
   } catch (error) {
     console.error("Erro ao buscar itens paginados:", error);

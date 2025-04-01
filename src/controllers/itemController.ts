@@ -168,7 +168,13 @@ export const getAll = async (req: Request, res: Response) => {
       ],
     });
 
-    res.status(200).json(items);
+    const formattedItems = items.map((item) => ({
+      ...item.toJSON(),
+      category_id: item.category ? [item.category] : [],
+      author_id: item.author ? [item.author] : [],
+    }));
+
+    res.status(200).json(formattedItems);
   } catch (error) {
     res.status(500).json({ message: "Erro ao buscar itens.", details: error });
   }

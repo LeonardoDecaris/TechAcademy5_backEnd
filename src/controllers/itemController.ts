@@ -30,14 +30,9 @@ export const getItemById = async (req: Request<{ id: string }>, res: Response) =
       return res.status(404).json({ message: "Item não encontrado" });
     }
 
-    // Ajusta o formato do retorno para incluir os dados de categoria e autor
-    const formattedItem = {
-      ...item.toJSON(),
-      category_id: item.category ? [item.category] : [],
-      author_id: item.author ? [item.author] : [],
-    };
 
-    return res.status(200).json(formattedItem);
+
+    return res.status(200).json(item);
   } catch (error) {
     res.status(500).json("Erro do Servidor Interno" + error);
   }
@@ -127,11 +122,6 @@ export const getPaginatedItems = async (req: Request<{ page: string }>, res: Res
       ],
     });
 
-    const formattedItems = items.map((item) => ({
-      ...item.toJSON(),
-      category_id: item.category ? [item.category] : [],
-      author_id: item.author ? [item.author] : [],
-    }));
 
     const totalPages = Math.ceil(totalItems / limitNumber);
 
@@ -143,7 +133,7 @@ export const getPaginatedItems = async (req: Request<{ page: string }>, res: Res
       currentPage: pageNumber,
       totalPages,
       totalItems,
-      items: formattedItems,
+      items,
     });
   } catch (error) {
     console.error("Erro ao buscar itens paginados:", error);
@@ -168,13 +158,7 @@ export const getAll = async (req: Request, res: Response) => {
       ],
     });
 
-    const formattedItems = items.map((item) => ({
-      ...item.toJSON(),
-      category_id: item.category ? [item.category] : [],
-      author_id: item.author ? [item.author] : [],
-    }));
-
-    res.status(200).json(formattedItems);
+    res.status(200).json(items);
   } catch (error) {
     res.status(500).json({ message: "Erro ao buscar itens.", details: error });
   }

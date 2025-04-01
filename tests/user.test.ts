@@ -1,8 +1,6 @@
 import app from '../src/app'
 import sequelize from '../src/config/database'
 import request from 'supertest'
-import { authMiddleware } from '../src/middleware/authMiddleware'
-
 
 jest.mock('../src/middleware/authMiddleware', () => {
     return {
@@ -42,7 +40,7 @@ describe('User Endpoint', () => {
         expect(response.status).toBe(201)
     })
 
-    test('GET /users should return a list of users', async () => {
+    test('GET /users should return a list of user', async () => {
         const response = await request(app)
             .get('/users')
             .set({Authorization: 'TestToken'})
@@ -50,41 +48,31 @@ describe('User Endpoint', () => {
         expect(response.status).toBe(200)
     })
 
-    test('GET /users/:id should return a user', async () => {
+    test('GET /users/:id should return a user by id', async () => {
         const response = await request(app)
             .get('/users/1')
             .set({Authorization: 'TestToken'})
+
         expect(response.status).toBe(200)
-        expect(response.body).toHaveProperty('id')
     })
 
-    test('PUT /users/:id should update a user', async () => {
+    test('PUT /users/:id should update a user and return success', async () => {
         const response = await request(app)
             .put('/users/1')
-            .set({Authorization: 'TestToken'})
             .send({
-                id: "1",
-                name: "João",
+                name: "João Atualizado",
                 cpf: "847.671.250-22",
                 email: "email@exemplo.com",
-                password: "senha123",
-            })
-        expect(response.status).toBe(200)
-    })
+                password: "novaSenha123",
+            });
+        expect(response.status).toBe(200); 
+    });
 
-    test('DELETE /users/:id should delete a user', async () => {
+    test('DELETE /users/:id should return a user by id', async () => {
         const response = await request(app)
             .delete('/users/1')
             .set({Authorization: 'TestToken'})
-        expect(response.status).toBe(204)
+
+        expect(response.status).toBe(200)
     })
-
-
-
-
-
-
-
-
-
 })

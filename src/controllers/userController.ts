@@ -70,30 +70,29 @@ export const createUser = async (req: Request, res: Response) => {
   }
 };
 
-export const updateUser = async (
-  req: Request<{ id: string }>,
-  res: Response
-) => {
+export const updateUser = async (req: Request, res: Response) => {
   try {
-    const parsedData = await updateUserSchema.parseAsync(req.body);
+    const { id } = req.params; // Obtém o ID do usuário da URL
+    const { name, cpf, email, password } = req.body;
 
-    const user = await UserModel.findByPk(req.params.id);
+    // Verifica se o usuário existe
+    const user = await UserModel.findByPk(id);
     if (!user) {
-      return res.status(404).json({ message: "User not Found" });
+      return res.status(404).json({ message: 'Usuário não encontrado.' });
     }
 
-    user.name = parsedData.name;
-    user.cpf = parsedData.cpf;
-    user.email = parsedData.email;
-    user.password = parsedData.password;
+    // Atualiza os dados do usuário
+    user.name = name || user.name;
+    user.cpf = cpf || user.cpf;
+    user.email = email || user.email;
+    user.password = password || user.password;
 
     await user.save();
-    res.status(201).json(user);
+
+    res.status(200).json({ user });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ message: error.errors });
-    }
-    res.status(500).json("Internal server error: " + error);
+    console.error('Erro ao atualizar usuário:', error);
+    res.status(500).json({ message: 'Erro ao atualizar usuário.' });
   }
 };
 

@@ -10,13 +10,13 @@ AuthorModel.init(
     {
         id: {
             type: DataTypes.INTEGER,
+            primaryKey: true,
             autoIncrement: true,
-            primaryKey: true
         },
         name: {
             type: DataTypes.STRING,
             allowNull: false
-        }
+        },
     },
     {
         sequelize,

@@ -6,9 +6,8 @@ import { z } from "zod";
 
 const collections: { id: number; name: string }[] = [];
 
-// Método para criar uma nova coleção
 export const createFavorite = async (req: Request, res: Response): Promise<void> => {
-    const { name, items } = req.body; // `items` é um array de IDs de itens
+    const { name, items } = req.body;
 
     if (!name) {
         res.status(400).json({ message: 'O campo "name" é obrigatório.' });
@@ -16,12 +15,10 @@ export const createFavorite = async (req: Request, res: Response): Promise<void>
     }
 
     try {
-        // Cria o favorito
+
         const newFavorite = await FavoritesModel.create({ name });
 
-        // Verifica se há itens para associar
         if (items && Array.isArray(items)) {
-            // Busca os itens pelo array de IDs
             const foundItems = await ItemModel.findAll({
                 where: {
                     id: items,
@@ -33,11 +30,9 @@ export const createFavorite = async (req: Request, res: Response): Promise<void>
                 return;
             }
 
-            // Associa os itens ao favorito
             await newFavorite.addItems(foundItems);
         }
 
-        // Retorna o favorito criado com os itens associados
         const favoriteWithItems = await FavoritesModel.findByPk(newFavorite.id, {
             include: [{ model: ItemModel, as: 'items' }],
         });
@@ -54,7 +49,6 @@ export const createFavorite = async (req: Request, res: Response): Promise<void>
 
 export const getAll = async (req: Request, res: Response): Promise<void> => {
   try {
-    // Busca todos os favoritos no banco de dados, incluindo os itens associados
     const favorites = await FavoritesModel.findAll({
       include: [{ model: ItemModel, as: "items" }],
     });
@@ -70,7 +64,6 @@ export const getFavoriteById = async (req: Request<{ id: string }>, res: Respons
     const { id } = req.params;
 
     try {
-        // Busca o favorito pelo ID, incluindo os itens associados
         const favorite = await FavoritesModel.findByPk(id, {
             include: [{ model: ItemModel, as: "items" }],
         });
@@ -88,11 +81,10 @@ export const getFavoriteById = async (req: Request<{ id: string }>, res: Respons
 };
 
 export const updateFavorite = async (req: Request<{ id: string }>, res: Response): Promise<void> => {
-    const { name, items } = req.body; // `items` é um array de IDs de itens
+    const { name, items } = req.body;
     const { id } = req.params;
 
     try {
-        // Busca o favorito pelo ID
         const favorite = await FavoritesModel.findByPk(id, {
             include: [{ model: ItemModel, as: "items" }],
         });
@@ -102,14 +94,10 @@ export const updateFavorite = async (req: Request<{ id: string }>, res: Response
             return;
         }
 
-        // Adicione um tipo explícito para `favorite.items`
         const currentItems = ((favorite as any).items || []).map((item: ItemModel) => item.id);
-
-        // Determina os itens a serem adicionados e removidos
         const itemsToAdd = items.filter((itemId: number) => !currentItems.includes(itemId));
         const itemsToRemove = currentItems.filter((itemId: number) => !items.includes(itemId));
 
-        // Adiciona os novos itens
         if (itemsToAdd.length > 0) {
             const foundItemsToAdd = await ItemModel.findAll({
                 where: {
@@ -122,7 +110,6 @@ export const updateFavorite = async (req: Request<{ id: string }>, res: Response
             }
         }
 
-        // Remove os itens que não estão mais associados
         if (itemsToRemove.length > 0) {
             const foundItemsToRemove = await ItemModel.findAll({
                 where: {
@@ -135,7 +122,6 @@ export const updateFavorite = async (req: Request<{ id: string }>, res: Response
             }
         }
 
-        // Retorna o favorito atualizado com os itens associados
         const updatedFavorite = await FavoritesModel.findByPk(id, {
             include: [{ model: ItemModel, as: "items" }],
         });

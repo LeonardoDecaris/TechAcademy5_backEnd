@@ -5,8 +5,8 @@ import { authMiddleware } from '../middleware/authMiddleware';
 const router = express.Router();
 
 router.get('/items', getAll);
-router.get('/items/paginated', getPaginatedItems); // Nova rota para paginação
-router.get('/items/paginated/:page', getPaginatedItems); // Rota para paginação com o número da página como path parameter
+router.get('/items/paginated', getPaginatedItems);
+router.get('/items/paginated/:page', getPaginatedItems);
 router.get('/items/:id', getItemById);
 router.post('/items', authMiddleware, createItem);
 router.put('/items/:id', authMiddleware, updateItem);
@@ -134,56 +134,6 @@ router.delete('/items/:id', authMiddleware, deleteItemById);
  *         description: Item deletado com sucesso.
  *       '404':
  *         description: Item não encontrado.
- *       '500':
- *         description: Erro de servidor.
- * /items/paginated:
- *   get:
- *     tags:
- *       - Items
- *     summary: Lista itens com paginação
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: page
- *         required: false
- *         schema:
- *           type: integer
- *         description: Número da página (padrão: 1).
- *       - in: query
- *         name: limit
- *         required: false
- *         schema:
- *           type: integer
- *         description: Número de itens por página (padrão: 10).
- *     responses:
- *       '200':
- *         description: Lista de itens paginada retornada com sucesso.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 currentPage:
- *                   type: integer
- *                   description: Página atual.
- *                   example: 1
- *                 totalPages:
- *                   type: integer
- *                   description: Número total de páginas.
- *                   example: 5
- *                 totalItems:
- *                   type: integer
- *                   description: Número total de itens.
- *                   example: 50
- *                 items:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/Item'
- *       '400':
- *         description: Parâmetros de paginação inválidos.
- *       '401':
- *         description: Não autorizado.
  *       '500':
  *         description: Erro de servidor.
  */

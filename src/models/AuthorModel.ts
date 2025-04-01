@@ -1,4 +1,3 @@
-import { execFile } from "node:child_process";
 import { DataTypes, Model } from "sequelize";
 import sequelize from '../config/database';
 

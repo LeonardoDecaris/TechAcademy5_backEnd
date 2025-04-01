@@ -5,8 +5,8 @@ import { authMiddleware } from '../middleware/authMiddleware';
 const router = express.Router();
 
 router.get("/users", getAllUsers);
-router.get("/users/paginated", getPaginatedUsers); // Nova rota para paginação
-router.get('/users/paginated/:page', getPaginatedUsers); // Exemplo de rota no Express
+router.get("/users/paginated", getPaginatedUsers); 
+router.get('/users/paginated/:page', getPaginatedUsers); 
 router.get("/users/:id", authMiddleware, getUserById);
 router.post("/users", createUser);
 router.put("/users/:id", authMiddleware, updateUser);
@@ -34,62 +34,6 @@ router.delete("/users/:id", authMiddleware, deleteUserById);
  *         description: Não autorizado
  *       '500':
  *         description: Erro de servidor
- */
-
-// PAGINATED GET
-
-/**
- * @openapi
- * /users/paginated:
- *   get:
- *     tags:
- *       - Users
- *     summary: Lista usuários com paginação
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: page
- *         required: false
- *         schema:
- *           type: integer
- *         description: Número da página (padrão: 1).
- *       - in: query
- *         name: limit
- *         required: false
- *         schema:
- *           type: integer
- *         description: Número de usuários por página (padrão: 10).
- *     responses:
- *       '200':
- *         description: Lista de usuários paginada retornada com sucesso.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 currentPage:
- *                   type: integer
- *                   description: Página atual.
- *                   example: 1
- *                 totalPages:
- *                   type: integer
- *                   description: Número total de páginas.
- *                   example: 5
- *                 totalUsers:
- *                   type: integer
- *                   description: Número total de usuários.
- *                   example: 50
- *                 users:
- *                   type: array
- *                   items:
- *                     $ref: '#/components/schemas/User'
- *       '400':
- *         description: Parâmetros de paginação inválidos.
- *       '401':
- *         description: Não autorizado.
- *       '500':
- *         description: Erro de servidor.
  */
 
 //POST

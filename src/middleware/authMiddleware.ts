@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from "express";
 declare global {
   namespace Express {
     interface Request {
-      user?: any; // Add the `user` property to the Request interface
+      user?: any;
     }
   }
 }
@@ -21,8 +21,8 @@ export const authMiddleware = (
   }
 
   try {
-    const decoded: any = verifyToken(token); // Decodifica o token
-    req.user = decoded; // Adiciona o usuário decodificado ao objeto `req`
+    const decoded: any = verifyToken(token);
+    req.user = decoded;
     next();
   } catch (error) {
     return res.status(401).json({ message: "Acesso negado. Token inválido" });

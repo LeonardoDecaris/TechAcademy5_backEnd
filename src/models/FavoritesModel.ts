@@ -1,10 +1,6 @@
 import { Model, DataTypes, Optional } from "sequelize";
 import sequelize from "../config/database";
 import ItemModel from "./ItemModel";
-
-
-
-
 interface FavoritesAttributes {
   id: number;
   name: string;
@@ -16,16 +12,11 @@ class FavoritesModel extends Model<FavoritesAttributes, FavoritesCreationAttribu
   public id!: number;
   public name!: string;
 
-  // Métodos gerados pelo Sequelize para associações
   public addItems!: (items: ItemModel[] | ItemModel) => Promise<void>;
   public getItems!: () => Promise<ItemModel[]>;
   public setItems!: (items: ItemModel[] | ItemModel) => Promise<void>;
   public removeItems!: (items: ItemModel[] | ItemModel) => Promise<void>;
 }
-
-
-
-
 
 FavoritesModel.init(
   {
@@ -45,17 +36,16 @@ FavoritesModel.init(
   }
 );
 
-// Define associations
 FavoritesModel.belongsToMany(ItemModel, {
-  through: "favorites_item", // Nome da tabela intermediária
-  foreignKey: "favorite_id", // Chave estrangeira que referencia a tabela de favoritos
-  as: "items", // Nome da associação
+  through: "favorites_item",
+  foreignKey: "favorite_id",
+  as: "items",
 });
 
 ItemModel.belongsToMany(FavoritesModel, {
-  through: "favorites_item", // Nome da tabela intermediária
-  foreignKey: "item_id", // Chave estrangeira que referencia a tabela de itens
-  as: "favorites", // Nome da associação
+  through: "favorites_item",
+  foreignKey: "item_id",
+  as: "favorites",
 });
 
 export default FavoritesModel;

@@ -14,7 +14,7 @@ const sequelize = new Sequelize(
 
 (async () => {
     try {
-        await sequelize.sync({ alter: true }); // Use { force: true } para recriar as tabelas (cuidado com perda de dados)
+        await sequelize.sync({ alter: true });
         console.log('Banco de dados sincronizado.');
     } catch (error) {
         console.error('Erro ao sincronizar o banco de dados:', error);

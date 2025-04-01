@@ -3,7 +3,6 @@ import { getAll, createFavorite, deleteFavoriteById, getFavoriteById, updateFavo
 
 const router = express.Router();
 
-// Removendo o middleware `authMiddleware` para permitir acesso sem autenticação
 router.get("/favorites", getAll);
 router.post("/favorites", createFavorite);
 router.delete("/favorites/:id", deleteFavoriteById);

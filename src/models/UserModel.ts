@@ -2,8 +2,6 @@ import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database";
 import { cp } from "fs";
 import bcrypt from "bcrypt";
-import FavoritesModel from "./FavoritesModel";
-import ItemModel from "./ItemModel";
 
 class UserModel extends Model {
   id: number | undefined;

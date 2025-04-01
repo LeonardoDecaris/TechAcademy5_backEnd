@@ -1,0 +1,55 @@
+import app from "../src/app";
+import sequelize from "../src/config/database";
+import request from "supertest";
+
+describe("User Endpoint", () => {
+  beforeAll(async () => {
+    await sequelize.sync({ force: true });
+  });
+
+  afterAll(async () => {
+    await sequelize.close();
+  });
+
+  test("POST /methodpayment shold create a new user and return success", async () => {
+    const response = await request(app).post("/methodpayment").send({
+      name: "pix",
+    });
+    console.log(response.body);
+    expect(response.status).toBe(201);
+  });
+
+  test("POST /methodpayment shold create a new user and return success", async () => {
+    const response = await request(app).post("/methodpayment").send({
+      name: "Boleto",
+    });
+    console.log(response.body);
+    expect(response.status).toBe(201);
+  });
+
+  test("GET /methodpayment should return a list", async () => {
+    const response = await request(app).get("/methodpayment");
+    console.log(response.body);
+    expect(response.status).toBe(200);
+  });
+
+  test("PUT /methodpayment shold update a methodpayment and return success", async () => {
+    const response = await request(app).put("/methodpayment/2").send({
+      name: "Cartão de debito",
+    });
+    console.log(response.body);
+    expect(response.status).toBe(201);
+  });
+
+  test("DELETE /methodpayment should delete a methodpayment", async () => {
+    const response = await request(app).delete("/methodpayment/2");
+    console.log("Deleted methodpayment");
+    expect(response.status).toBe(204);
+  });
+
+  test("DELETE /methodpayment shouldn't to delete a inexistent methodpayment", async () => {
+    const response = await request(app).delete("/methodpayment/55");
+    console.log("Deleted methodpayment");
+    expect(response.status).toBe(204);
+  });
+});

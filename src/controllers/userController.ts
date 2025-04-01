@@ -22,8 +22,8 @@ export const getUserById = async (req: Request<{ id: string }>, res: Response) =
 
 export const getPaginatedUsers = async (req: Request, res: Response) => {
   try {
-    const { page } = req.params; // Obtém o número da página do path parameter
-    const { limit = 10 } = req.query; // Obtém o limite dos query parameters (opcional)
+    const { page } = req.params;
+    const { limit = 10 } = req.query;
 
     const pageNumber = parseInt(page, 10);
     const limitNumber = parseInt(limit as string, 10);
@@ -62,7 +62,6 @@ export const createUser = async (req: Request, res: Response) => {
       return res.status(400).json({ error: error.errors });
     }
 
-    // Captura erros de validação de CPF ou outros erros
     if (error instanceof Error) {
       return res.status(400).json({ error: error.message });
     }

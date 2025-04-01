@@ -4,35 +4,10 @@ import { createItemSchema, updateItemSchema } from "../schemas/itemValidationSch
 import { z } from "zod";
 import AuthorModel from "../models/AuthorModel";
 import CategoryModel from "../models/CategoryModel";
+import FavoritesModel from "../models/FavoritesModel";
+import UserModel from "../models/UserModel";
 
-export const getAll = async (req: Request, res: Response) => {
-  try {
-    const items = await ItemModel.findAll({
-      include: [
-        {
-          model: CategoryModel,
-          as: "category",
-          attributes: ["id", "name"], // Campos que deseja retornar
-        },
-        {
-          model: AuthorModel,
-          as: "author",
-          attributes: ["id", "name"], // Campos que deseja retornar
-        },
-      ],
-    });
 
-    const formattedItems = items.map((item) => ({
-      ...item.toJSON(),
-      category_id: item.category ? [item.category] : [],
-      author_id: item.author ? [item.author] : [],
-    }));
-
-    res.status(200).json(formattedItems);
-  } catch (error) {
-    res.status(500).json({ message: "Erro ao buscar itens.", details: error });
-  }
-};
 
 export const getItemById = async (req: Request<{ id: string }>, res: Response) => {
   try {
@@ -173,5 +148,28 @@ export const getPaginatedItems = async (req: Request<{ page: string }>, res: Res
   } catch (error) {
     console.error("Erro ao buscar itens paginados:", error);
     res.status(500).json({ message: "Erro ao buscar itens paginados.", details: error });
+  }
+};
+
+export const getAll = async (req: Request, res: Response) => {
+  try {
+    const items = await ItemModel.findAll({
+      include: [
+        {
+          model: CategoryModel,
+          as: "category",
+          attributes: ["id", "name"], // Campos que deseja retornar
+        },
+        {
+          model: AuthorModel,
+          as: "author",
+          attributes: ["id", "name"], // Campos que deseja retornar
+        },
+      ],
+    });
+
+    res.status(200).json(items);
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao buscar itens.", details: error });
   }
 };

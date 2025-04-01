@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import UserModel from "../models/UserModel";
 import { createUserSchema, updateUserSchema } from "../schemas/userValidationSchemas";
-import FavoriteModel from "../models/FavoritesModel"; // Import FavoriteModel
 import { z } from "zod";
 
 export const getAllUsers = async (req: Request, res: Response) => {
@@ -11,23 +10,13 @@ export const getAllUsers = async (req: Request, res: Response) => {
 
 export const getUserById = async (req: Request<{ id: string }>, res: Response) => {
   try {
-    const user = await UserModel.findByPk(req.params.id, {
-      include: [
-        {
-          model: FavoriteModel,
-          as: "favorites",
-          attributes: ["id", "item_id"], // Campos que deseja retornar
-        },
-      ],
-    });
-
+    const user = await UserModel.findByPk(req.params.id);
     if (!user) {
-      return res.status(404).json({ message: "Usuário não encontrado" });
+      return res.status(404).json({ message: "User não encontrado" });
     }
-
-    res.status(200).json(user);
+    return res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: "Erro ao buscar usuário.", details: error });
+    res.status(500).json("Erro do Servidor Interno: " + error);
   }
 };
 

@@ -34,7 +34,7 @@ export const createFavorite = async (req: Request, res: Response): Promise<void>
         }
 
         const favoriteWithItems = await FavoritesModel.findByPk(newFavorite.id, {
-            include: [{ model: ItemModel, as: 'items' }],
+            include: [{ model: ItemModel, as: 'item' }],
         });
 
         res.status(201).json({
@@ -50,7 +50,7 @@ export const createFavorite = async (req: Request, res: Response): Promise<void>
 export const getAll = async (req: Request, res: Response): Promise<void> => {
   try {
     const favorites = await FavoritesModel.findAll({
-      include: [{ model: ItemModel, as: "items" }],
+      include: [{ model: ItemModel, as: "item" }],
     });
 
     res.status(200).json(favorites);
@@ -65,7 +65,7 @@ export const getFavoriteById = async (req: Request<{ id: string }>, res: Respons
 
     try {
         const favorite = await FavoritesModel.findByPk(id, {
-            include: [{ model: ItemModel, as: "items" }],
+            include: [{ model: ItemModel, as: "item" }],
         });
 
         if (!favorite) {

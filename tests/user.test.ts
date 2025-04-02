@@ -16,7 +16,8 @@ jest.mock('../src/middleware/authMiddleware', () => {
             next()
         }
     }
-})
+    });
+
 
 describe('User Endpoint', () => {
     beforeAll(async () => {
@@ -39,6 +40,50 @@ describe('User Endpoint', () => {
             })
         expect(response.status).toBe(201)
     })
+
+    
+    test('POST /users should fail when required fields are missing', async () => {
+        const response = await request(app)
+            .post('/users')
+            .send({
+                name: "João",
+                email: "email@exemplo.com",
+                password: "senha123",
+            }); 
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty('error');
+    });
+
+// Teste de CPF inválido
+
+test('POST /users should fail when fields are invalid', async () => {
+    const response = await request(app)
+        .post('/users')
+        .send({
+            id: "1",
+            name: "João",
+            cpf: "000000000000",
+            email: "email@exemplo.com",
+            password: "senha123",
+        }); 
+    expect(response.status).toBe(400);
+    expect(response.body).toHaveProperty('error');
+});
+
+    test('POST /users should fail when fields are invalid', async () => {
+        const response = await request(app)
+            .post('/users')
+            .send({
+                id: "1",
+                name: "João",
+                cpf: "invalid-cpf",
+                email: "invalid-email",
+                password: "short",
+            }); 
+        expect(response.status).toBe(400);
+        expect(response.body).toHaveProperty('error');
+    });
+
 
     test('GET /users should return a list of user', async () => {
         const response = await request(app)
@@ -75,4 +120,12 @@ describe('User Endpoint', () => {
 
         expect(response.status).toBe(200)
     })
-})
+    test('DELETE /users/:id should return 404 when user not found', async () => {
+        const response = await request(app)
+            .delete('/users/999') // Assuming 999 does not exist
+            .set({Authorization: 'TestToken'})
+
+        expect(response.status).toBe(404)
+
+    })
+});

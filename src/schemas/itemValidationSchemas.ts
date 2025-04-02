@@ -46,12 +46,9 @@ const isFavoritesExists = async (favoritesId: number): Promise<boolean> => {
 // Esquema de validação para criação de item
 export const createItemSchema = z.object({
   name: z.string().nonempty("Nome é obrigatório"),
-  time: z.string().optional().transform((time) => {
-    if (!time) return null; // Permite que o campo seja opcional
-    return validateAndFormatTime(time);
-  }),
+  time: z.string().nonempty("Tempo é obrigatório").transform(validateAndFormatTime),
   directory: z.string().nonempty("Diretório é obrigatório"),
-  image: z.string().optional(),
+  image: z.string().nonempty("Imagem é obrigatória"),
   category_id: z.number().int().positive("ID da categoria deve ser um número positivo").refine(async (categoryId) => {
     return await isCategoryExists(categoryId);
   }, {
@@ -73,12 +70,9 @@ export const createItemSchema = z.object({
 // Esquema de validação para atualização de item
 export const updateItemSchema = z.object({
   name: z.string().nonempty("Nome é obrigatório"),
-  time: z.string().optional().transform((time) => {
-    if (!time) return null; // Permite que o campo seja opcional
-    return validateAndFormatTime(time);
-  }),
+  time: z.string().nonempty("Tempo é obrigatório").transform(validateAndFormatTime),
   directory: z.string().nonempty("Diretório é obrigatório"),
-  image: z.string().optional(),
+  image: z.string().nonempty("Imagem é obrigatória"),
   category_id: z.number().int().positive("ID da categoria deve ser um número positivo").refine(async (categoryId) => {
     return await isCategoryExists(categoryId);
   }, {

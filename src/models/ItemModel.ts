@@ -7,9 +7,9 @@ import CategoryModel from "./CategoryModel";
 interface ItemAttributes {
   id: number;
   name: string;
-  time: string | null;
+  time: string;
   directory: string;
-  image: string  | null;
+  image: string;
   category_id: number;
   author_id: number;
   createdAt?: Date;
@@ -50,7 +50,7 @@ ItemModel.init(
     },
     time: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
     },
     directory: {
       type: DataTypes.STRING,
@@ -58,7 +58,7 @@ ItemModel.init(
     },
     image: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
     },
     category_id: {
       type: DataTypes.INTEGER,

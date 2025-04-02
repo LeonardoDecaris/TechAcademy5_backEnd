@@ -42,6 +42,7 @@ export const createItem = async (req: Request, res: Response) => {
   try {
     const parsedData = await createItemSchema.parseAsync(req.body);
 
+    
     const item = await ItemModel.create(parsedData);
     res.status(201).json(item);
   } catch (error) {
@@ -61,12 +62,13 @@ export const updateItem = async (req: Request<{ id: string }>, res: Response) =>
       return res.status(404).json({ error: "Item not Found" });
     }
 
-    item.name = parsedData.name;
-    item.time = parsedData.time;
-    item.directory = parsedData.directory;
-    item.image = parsedData.image;
-    item.category_id = parsedData.category_id;
-    item.author_id = parsedData.author_id;
+    if (parsedData.name !== undefined) item.name = parsedData.name;
+    if (parsedData.time !== undefined && parsedData.time !== null) item.time = parsedData.time;
+    if (parsedData.directory !== undefined) item.directory = parsedData.directory;
+    if (parsedData.image !== undefined) item.image = parsedData.image;
+    if (parsedData.category_id !== undefined) item.category_id = parsedData.category_id;
+    if (parsedData.author_id !== undefined) item.author_id = parsedData.author_id;
+
 
     await item.save();
     res.status(201).json(item);

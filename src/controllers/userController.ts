@@ -73,7 +73,11 @@ export const createUser = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params; // Obtém o ID do usuário da URL
+<<<<<<< Updated upstream
     const { name, cpf, email, password } = req.body;
+=======
+    const { name, password } = req.body;
+>>>>>>> Stashed changes
 
     // Verifica se o usuário existe
     const user = await UserModel.findByPk(id);
@@ -83,8 +87,11 @@ export const updateUser = async (req: Request, res: Response) => {
 
     // Atualiza os dados do usuário
     user.name = name || user.name;
+<<<<<<< Updated upstream
     user.cpf = cpf || user.cpf;
     user.email = email || user.email;
+=======
+>>>>>>> Stashed changes
     user.password = password || user.password;
 
     await user.save();

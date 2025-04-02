@@ -7,9 +7,15 @@ import CategoryModel from "./CategoryModel";
 interface ItemAttributes {
   id: number;
   name: string;
+<<<<<<< Updated upstream
   time: string;
   directory: string;
   image: string;
+=======
+  time: string | null;
+  directory: string;
+  image: string  | null;
+>>>>>>> Stashed changes
   category_id: number;
   author_id: number;
   createdAt?: Date;
@@ -50,7 +56,11 @@ ItemModel.init(
     },
     time: {
       type: DataTypes.STRING,
+<<<<<<< Updated upstream
       allowNull: false,
+=======
+      allowNull: true,
+>>>>>>> Stashed changes
     },
     directory: {
       type: DataTypes.STRING,
@@ -58,7 +68,11 @@ ItemModel.init(
     },
     image: {
       type: DataTypes.STRING,
+<<<<<<< Updated upstream
       allowNull: false,
+=======
+      allowNull: true,
+>>>>>>> Stashed changes
     },
     category_id: {
       type: DataTypes.INTEGER,

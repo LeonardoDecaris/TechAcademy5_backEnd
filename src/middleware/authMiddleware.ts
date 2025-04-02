@@ -8,6 +8,14 @@ declare global {
   }
 }
 import { verifyToken } from "../utils/jtw";
+declare global {
+  namespace Express {
+    interface Request {
+      user?: any;
+    }
+  }
+}
+
 
 export const authMiddleware = (
   req: Request,

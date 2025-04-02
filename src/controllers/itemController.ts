@@ -30,20 +30,9 @@ export const getItemById = async (req: Request<{ id: string }>, res: Response) =
       return res.status(404).json({ message: "Item não encontrado" });
     }
 
-<<<<<<< Updated upstream
-    // Ajusta o formato do retorno para incluir os dados de categoria e autor
-    const formattedItem = {
-      ...item.toJSON(),
-      category_id: item.category ? [item.category] : [],
-      author_id: item.author ? [item.author] : [],
-    };
-
-    return res.status(200).json(formattedItem);
-=======
 
 
     return res.status(200).json(item);
->>>>>>> Stashed changes
   } catch (error) {
     res.status(500).json("Erro do Servidor Interno" + error);
   }
@@ -73,14 +62,6 @@ export const updateItem = async (req: Request<{ id: string }>, res: Response) =>
       return res.status(404).json({ error: "Item not Found" });
     }
 
-<<<<<<< Updated upstream
-    item.name = parsedData.name;
-    item.time = parsedData.time;
-    item.directory = parsedData.directory;
-    item.image = parsedData.image;
-    item.category_id = parsedData.category_id;
-    item.author_id = parsedData.author_id;
-=======
     if (parsedData.name !== undefined) item.name = parsedData.name;
     if (parsedData.time !== undefined && parsedData.time !== null) item.time = parsedData.time;
     if (parsedData.directory !== undefined && parsedData.directory !== null) item.directory = parsedData.directory;
@@ -88,7 +69,6 @@ export const updateItem = async (req: Request<{ id: string }>, res: Response) =>
     if (parsedData.category_id !== undefined) item.category_id = parsedData.category_id;
     if (parsedData.author_id !== undefined) item.author_id = parsedData.author_id;
 
->>>>>>> Stashed changes
 
     await item.save();
     res.status(201).json(item);
@@ -144,14 +124,6 @@ export const getPaginatedItems = async (req: Request<{ page: string }>, res: Res
       ],
     });
 
-<<<<<<< Updated upstream
-    const formattedItems = items.map((item) => ({
-      ...item.toJSON(),
-      category_id: item.category ? [item.category] : [],
-      author_id: item.author ? [item.author] : [],
-    }));
-=======
->>>>>>> Stashed changes
 
     const totalPages = Math.ceil(totalItems / limitNumber);
 
@@ -163,11 +135,7 @@ export const getPaginatedItems = async (req: Request<{ page: string }>, res: Res
       currentPage: pageNumber,
       totalPages,
       totalItems,
-<<<<<<< Updated upstream
-      items: formattedItems,
-=======
       items,
->>>>>>> Stashed changes
     });
   } catch (error) {
     console.error("Erro ao buscar itens paginados:", error);
@@ -192,17 +160,7 @@ export const getAll = async (req: Request, res: Response) => {
       ],
     });
 
-<<<<<<< Updated upstream
-    const formattedItems = items.map((item) => ({
-      ...item.toJSON(),
-      category_id: item.category ? [item.category] : [],
-      author_id: item.author ? [item.author] : [],
-    }));
-
-    res.status(200).json(formattedItems);
-=======
     res.status(200).json(items);
->>>>>>> Stashed changes
   } catch (error) {
     res.status(500).json({ message: "Erro ao buscar itens.", details: error });
   }

@@ -75,11 +75,26 @@ export const updateUser = async (req: Request, res: Response) => {
     const { id } = req.params; // Obtém o ID do usuário da URL
     const { name, password } = req.body;
 
+    if (!req.body.user || !req.body.user.id) {
+      return res.status(401).json({ message: "Usuário não autenticado." });
+    }
+
+    console.log("ID do usuário logado:", req.body.user.id);
+    console.log("ID do usuário a ser atualizado:", id);
+
+    // Verifica se o ID do usuário logado corresponde ao ID do usuário a ser atualizado
+    if (req.body.user.id !== id) {
+      return res.status(403).json({ message: "Você não tem permissão para atualizar este usuário." });
+    }
+
     // Verifica se o usuário existe
     const user = await UserModel.findByPk(id);
     if (!user) {
-      return res.status(404).json({ message: 'Usuário não encontrado.' });
+      console.log("Usuário não encontrado.");
+      return res.status(404).json({ message: "Usuário não encontrado." });
     }
+
+    console.log("Usuário encontrado:", user);
 
     // Atualiza os dados do usuário
     user.name = name || user.name;
@@ -87,10 +102,12 @@ export const updateUser = async (req: Request, res: Response) => {
 
     await user.save();
 
+    console.log("Usuário atualizado com sucesso:", user);
+
     res.status(200).json({ user });
   } catch (error) {
-    console.error('Erro ao atualizar usuário:', error);
-    res.status(500).json({ message: 'Erro ao atualizar usuário.' });
+    console.error("Erro ao atualizar usuário:", error);
+    res.status(500).json({ message: "Erro ao atualizar usuário." });
   }
 };
 

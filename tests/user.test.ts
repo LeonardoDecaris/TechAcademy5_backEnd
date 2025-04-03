@@ -113,6 +113,19 @@ test('POST /users should fail when fields are invalid', async () => {
         expect(response.status).toBe(200); 
     });
 
+    test('PUT /users/:id should fail if logged-in user tries to update another user', async () => {
+        const response = await request(app)
+            .put('/users/2') // Tentando atualizar o usuário com ID 2
+            .send({
+                name: "Novo Nome",
+                password: "novaSenha123",
+            })
+            .set({ Authorization: 'TestToken' }); // Token do usuário logado com ID 1
+
+        expect(response.status).toBe(403);
+        expect(response.body).toHaveProperty('message', 'Você não tem permissão para atualizar este usuário.');
+    });
+
     test('DELETE /users/:id should return a user by id', async () => {
         const response = await request(app)
             .delete('/users/1')

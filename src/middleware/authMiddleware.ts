@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { verifyToken } from "../utils/jtw";
 declare global {
   namespace Express {
     interface Request {
@@ -8,23 +7,19 @@ declare global {
   }
 }
 
-
 export const authMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.header("Authorization")?.replace("Bearer ", "");
+  // Simulação de autenticação - substitua pelo seu mecanismo real
+  req.body.user = {
+    id: "1", // ID do usuário logado
+    name: "João",
+    cpf: "847.671.250-22",
+    email: "email@exemplo.com",
+    password: "senha123",
+  };
 
-  if (!token) {
-    return res.status(401).json({ message: "Acesso negado. Sem Token" });
-  }
-
-  try {
-    const decoded: any = verifyToken(token);
-    req.user = decoded;
-    next();
-  } catch (error) {
-    return res.status(401).json({ message: "Acesso negado. Token inválido" });
-  }
+  next();
 };

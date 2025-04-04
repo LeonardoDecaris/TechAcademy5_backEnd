@@ -6,52 +6,58 @@ import AuthorModel from "../models/AuthorModel";
 import CategoryModel from "../models/CategoryModel";
 import FavoritesModel from "../models/FavoritesModel";
 import UserModel from "../models/UserModel";
-
-
+import fs from "fs";
+import path from "path";
+import ffmpeg from "fluent-ffmpeg";
+import { upload } from "../middlewares/uploadMiddleware";
 
 export const getItemById = async (req: Request<{ id: string }>, res: Response) => {
   try {
-    const item = await ItemModel.findByPk(req.params.id, {
-      include: [
-        {
-          model: CategoryModel,
-          as: "category",
-          attributes: ["id", "name"], // Campos que deseja retornar
-        },
-        {
-          model: AuthorModel,
-          as: "author",
-          attributes: ["id", "name"], // Campos que deseja retornar
-        },
-      ],
-    });
+    const item = await ItemModel.findByPk(req.params.id);
 
     if (!item) {
       return res.status(404).json({ message: "Item não encontrado" });
     }
 
+    // Lê o arquivo de áudio do diretório e converte para Base64
+    const audioFilePath = path.join(__dirname, "../../", item.directory);
+    const audioBuffer = fs.readFileSync(audioFilePath);
+    const base64Audio = audioBuffer.toString("base64");
 
-
-    return res.status(200).json(item);
+    // Retorna o item com o áudio em Base64
+    res.status(200).json({
+      ...item.toJSON(),
+      directory: base64Audio, // Substitui o caminho pelo áudio em Base64
+    });
   } catch (error) {
-    res.status(500).json("Erro do Servidor Interno" + error);
+    res.status(500).json("Erro do Servidor Interno: " + error);
   }
 };
 
-export const createItem = async (req: Request, res: Response) => {
-  try {
-    const parsedData = await createItemSchema.parseAsync(req.body);
+export const createItem = [
+  upload.single("audio"), // Middleware para lidar com o upload do arquivo
+  async (req: Request, res: Response) => {
+    try {
+      const parsedData = await createItemSchema.parseAsync(req.body);
 
-    
-    const item = await ItemModel.create(parsedData);
-    res.status(201).json(item);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: error.errors });
+      if (!req.file) {
+        return res.status(400).json({ error: "O campo 'audio' é obrigatório." });
+      }
+
+      // Salva o caminho do arquivo no banco de dados
+      parsedData.directory = `/uploads/${req.file.filename}`;
+
+      const item = await ItemModel.create(parsedData);
+      res.status(201).json(item);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors });
+      }
+      console.error("Erro ao criar item:", error);
+      res.status(500).json({ error: "Erro interno do servidor." });
     }
-    res.status(500).json("Internal server error" + error);
-  }
-};
+  },
+];
 
 export const updateItem = async (req: Request<{ id: string }>, res: Response) => {
   try {
@@ -114,16 +120,15 @@ export const getPaginatedItems = async (req: Request<{ page: string }>, res: Res
         {
           model: CategoryModel,
           as: "category",
-          attributes: ["id", "name"], // Campos que deseja retornar
+          attributes: ["id", "name"],
         },
         {
           model: AuthorModel,
           as: "author",
-          attributes: ["id", "name"], // Campos que deseja retornar
+          attributes: ["id", "name"],
         },
       ],
     });
-
 
     const totalPages = Math.ceil(totalItems / limitNumber);
 
@@ -150,12 +155,12 @@ export const getAll = async (req: Request, res: Response) => {
         {
           model: CategoryModel,
           as: "category",
-          attributes: ["id", "name"], // Campos que deseja retornar
+          attributes: ["id", "name"],
         },
         {
           model: AuthorModel,
           as: "author",
-          attributes: ["id", "name"], // Campos que deseja retornar
+          attributes: ["id", "name"],
         },
       ],
     });

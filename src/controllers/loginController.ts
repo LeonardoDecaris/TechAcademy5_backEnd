@@ -6,11 +6,11 @@ export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (!email) {
-    return res.status(400).json({ message: "O campo email é obrigatório." });
+    return res.status(400).json({ message: "Email is required" });
   }
 
   if (!password) {
-    return res.status(400).json({ message: "O campo senha é obrigatório." });
+    return res.status(400).json({ message: "Password is required" });
   }
 
   const user = await UserModel.findOne({ where: { email } });

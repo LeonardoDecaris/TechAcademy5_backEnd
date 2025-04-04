@@ -12,11 +12,11 @@ export const getUserById = async (req: Request<{ id: string }>, res: Response) =
   try {
     const user = await UserModel.findByPk(req.params.id);
     if (!user) {
-      return res.status(404).json({ message: "User não encontrado" });
+      return res.status(404).json({ message: "User not found" });
     }
     return res.status(200).json(user);
   } catch (error) {
-    res.status(500).json("Erro do Servidor Interno: " + error);
+    res.status(500).json("Internal server error: " + error);
   }
 };
 
@@ -29,11 +29,10 @@ export const getPaginatedUsers = async (req: Request, res: Response) => {
     const limitNumber = parseInt(limit as string, 10);
 
     if (isNaN(pageNumber) || pageNumber <= 0 || isNaN(limitNumber) || limitNumber <= 0) {
-      return res.status(400).json({ message: 'Parâmetros de paginação inválidos.' });
+      return res.status(400).json({ message: 'Invalid pagination parameters' });
     }
 
     const offset = (pageNumber - 1) * limitNumber;
-
     const { rows: users, count: totalUsers } = await UserModel.findAndCountAll({
       limit: limitNumber,
       offset,
@@ -46,8 +45,8 @@ export const getPaginatedUsers = async (req: Request, res: Response) => {
       users,
     });
   } catch (error) {
-    console.error('Erro ao buscar usuários paginados:', error);
-    res.status(500).json({ message: 'Erro ao buscar usuários paginados.' });
+    console.error('Error fetching paginated users: ', error);
+    res.status(500).json({ message: 'Error fetching paginated users' });
   }
 };
 
@@ -66,48 +65,40 @@ export const createUser = async (req: Request, res: Response) => {
       return res.status(400).json({ error: error.message });
     }
 
-    res.status(500).json({ error: "Erro interno do servidor" });
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
 export const updateUser = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params; // Obtém o ID do usuário da URL
+    // Get the user ID from the request parameters
+    const { id } = req.params; 
     const { name, password } = req.body;
 
     if (!req.body.user || !req.body.user.id) {
-      return res.status(401).json({ message: "Usuário não autenticado." });
+      return res.status(401).json({ message: "User not authenticated" });
     }
-
-    console.log("ID do usuário logado:", req.body.user.id);
-    console.log("ID do usuário a ser atualizado:", id);
-
-    // Verifica se o ID do usuário logado corresponde ao ID do usuário a ser atualizado
+    // Verify if the authenticated user ID matches the ID in the request parameters
     if (req.body.user.id !== id) {
-      return res.status(403).json({ message: "Você não tem permissão para atualizar este usuário." });
+      return res.status(403).json({ message: "You can only update your own user" });
     }
 
-    // Verifica se o usuário existe
     const user = await UserModel.findByPk(id);
     if (!user) {
-      console.log("Usuário não encontrado.");
-      return res.status(404).json({ message: "Usuário não encontrado." });
+      console.log("User not found:", id);
+      return res.status(404).json({ message: "User not found" });
     }
 
-    console.log("Usuário encontrado:", user);
-
-    // Atualiza os dados do usuário
+    // Update the user with the provided data
     user.name = name || user.name;
     user.password = password || user.password;
 
     await user.save();
 
-    console.log("Usuário atualizado com sucesso:", user);
-
     res.status(200).json({ user });
   } catch (error) {
-    console.error("Erro ao atualizar usuário:", error);
-    res.status(500).json({ message: "Erro ao atualizar usuário." });
+    console.error("Error updating user: ", error);
+    res.status(500).json({ message: "Error updating user" });
   }
 };
 
@@ -115,11 +106,11 @@ export const deleteUserById = async (req: Request<{ id: string }>, res: Response
   try {
     const user = await UserModel.findByPk(req.params.id);
     if (!user) {
-      return res.status(404).json({ message: "Usuário não encontrado" });
+      return res.status(404).json({ message: "User not found" });
     }
     await user.destroy();
-    res.status(200).json({ message: "Usuário deletado com sucesso" });
+    res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
-    res.status(500).json("Erro do Servidor Interno: " + error);
+    res.status(500).json("Internal server error " + error);
   }
 };

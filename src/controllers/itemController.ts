@@ -4,10 +4,6 @@ import { createItemSchema, updateItemSchema } from "../schemas/itemValidationSch
 import { z } from "zod";
 import AuthorModel from "../models/AuthorModel";
 import CategoryModel from "../models/CategoryModel";
-import FavoritesModel from "../models/FavoritesModel";
-import UserModel from "../models/UserModel";
-
-
 
 export const getItemById = async (req: Request<{ id: string }>, res: Response) => {
   try {
@@ -16,32 +12,29 @@ export const getItemById = async (req: Request<{ id: string }>, res: Response) =
         {
           model: CategoryModel,
           as: "category",
-          attributes: ["id", "name"], // Campos que deseja retornar
+          attributes: ["id", "name"],
         },
         {
           model: AuthorModel,
           as: "author",
-          attributes: ["id", "name"], // Campos que deseja retornar
+          attributes: ["id", "name"],
         },
       ],
     });
 
     if (!item) {
-      return res.status(404).json({ message: "Item não encontrado" });
+      return res.status(404).json({ message: "Item not found" });
     }
-
-
 
     return res.status(200).json(item);
   } catch (error) {
-    res.status(500).json("Erro do Servidor Interno" + error);
+    res.status(500).json("Internal server error" + error);
   }
 };
 
 export const createItem = async (req: Request, res: Response) => {
   try {
     const parsedData = await createItemSchema.parseAsync(req.body);
-
     
     const item = await ItemModel.create(parsedData);
     res.status(201).json(item);
@@ -69,7 +62,6 @@ export const updateItem = async (req: Request<{ id: string }>, res: Response) =>
     if (parsedData.category_id !== undefined) item.category_id = parsedData.category_id;
     if (parsedData.author_id !== undefined) item.author_id = parsedData.author_id;
 
-
     await item.save();
     res.status(201).json(item);
   } catch (error) {
@@ -87,7 +79,7 @@ export const deleteItemById = async (req: Request<{ id: string }>, res: Response
       return res.status(404).json({ error: "Item not found" });
     }
     await item.destroy();
-    res.status(200).json({ message: "Item deletado com sucesso" });
+    res.status(200).json({ message: "Item deleted successfully" });
   } catch (error) {
     res.status(500).json("Internal server error" + error);
   }
@@ -97,16 +89,14 @@ export const getPaginatedItems = async (req: Request<{ page: string }>, res: Res
   try {
     const { page } = req.params;
     const { limit = 10 } = req.query;
-
     const pageNumber = parseInt(page, 10);
     const limitNumber = parseInt(limit as string, 10);
 
     if (isNaN(pageNumber) || pageNumber <= 0 || isNaN(limitNumber) || limitNumber <= 0) {
-      return res.status(400).json({ message: "Parâmetros de paginação inválidos." });
+      return res.status(400).json({ message: "Invalid pagination parameters" });
     }
 
     const offset = (pageNumber - 1) * limitNumber;
-
     const { rows: items, count: totalItems } = await ItemModel.findAndCountAll({
       limit: limitNumber,
       offset,
@@ -114,21 +104,19 @@ export const getPaginatedItems = async (req: Request<{ page: string }>, res: Res
         {
           model: CategoryModel,
           as: "category",
-          attributes: ["id", "name"], // Campos que deseja retornar
+          attributes: ["id", "name"],
         },
         {
           model: AuthorModel,
           as: "author",
-          attributes: ["id", "name"], // Campos que deseja retornar
+          attributes: ["id", "name"],
         },
       ],
     });
 
-
     const totalPages = Math.ceil(totalItems / limitNumber);
-
     if (pageNumber > totalPages) {
-      return res.status(404).json({ message: `Página ${pageNumber} não existe. Total de páginas: ${totalPages}.` });
+      return res.status(404).json({ message: `Page ${pageNumber} not found. Number of pages: ${totalPages}` });
     }
 
     res.status(200).json({
@@ -138,8 +126,8 @@ export const getPaginatedItems = async (req: Request<{ page: string }>, res: Res
       items,
     });
   } catch (error) {
-    console.error("Erro ao buscar itens paginados:", error);
-    res.status(500).json({ message: "Erro ao buscar itens paginados.", details: error });
+    console.error("Error fetching paginated items:", error);
+    res.status(500).json({ message: "Error fetching paginated items", details: error });
   }
 };
 
@@ -150,18 +138,18 @@ export const getAll = async (req: Request, res: Response) => {
         {
           model: CategoryModel,
           as: "category",
-          attributes: ["id", "name"], // Campos que deseja retornar
+          attributes: ["id", "name"],
         },
         {
           model: AuthorModel,
           as: "author",
-          attributes: ["id", "name"], // Campos que deseja retornar
+          attributes: ["id", "name"],
         },
       ],
     });
 
     res.status(200).json(items);
   } catch (error) {
-    res.status(500).json({ message: "Erro ao buscar itens.", details: error });
+    res.status(500).json({ message: "Error fetching all items", details: error });
   }
 };

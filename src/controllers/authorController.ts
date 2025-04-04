@@ -12,11 +12,11 @@ export const getAuthorById = async (req: Request<{ id: string }>, res: Response)
   try {
     const author = await AuthorModel.findByPk(req.params.id);
     if (!author) {
-      return res.status(404).json({ message: "Ator não encontrado" });
+      return res.status(404).json({ message: "Author not found" });
     }
     return res.status(200).json(author);
   } catch (error) {
-    res.status(500).json("Erro do Servidor Interno" + error);
+    res.status(500).json("Internal server error" + error);
   }
 };
 
@@ -40,7 +40,7 @@ export const updateAuthor = async (req: Request<{ id: string }>, res: Response) 
 
     const author = await AuthorModel.findByPk(req.params.id);
     if (!author) {
-      return res.status(404).json({ error: "Autor não encontrado" });
+      return res.status(404).json({ error: "Author not found" });
     }
 
     author.name = parsedData.name;
@@ -59,10 +59,10 @@ export const deleteAuthorById = async (req: Request<{ id: string }>, res: Respon
   try {
     const author = await AuthorModel.findByPk(req.params.id);
     if (!author) {
-      return res.status(404).json({ error: "Autor não encontrado" });
+      return res.status(404).json({ error: "Author not found" });
     }
     await author.destroy();
-    res.status(200).json({ message: "Ator deletado com sucesso" });
+    res.status(200).json({ message: "Author deleted successfully" });
   } catch (error) {
     res.status(500).json("Internal server error" + error);
   }

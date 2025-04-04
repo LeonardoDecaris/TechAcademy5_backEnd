@@ -8,20 +8,20 @@ const collections: { id: number; name: string }[] = [];
 
 export const getAll = async (req: Request, res: Response) => {
   try {
-    // Busca todos os favoritos com os itens associados
+    // Search for all favorites with their associated items
     const favorites = await FavoritesModel.findAll({
       include: [
         {
           model: ItemModel,
-          as: "items", // Deve corresponder ao alias definido no relacionamento
+          as: "items",
         },
       ],
     });
 
     res.status(200).json(favorites);
   } catch (error) {
-    console.error("Erro ao buscar favoritos:", error);
-    res.status(500).json({ error: "Erro ao buscar favoritos", details: error });
+    console.error("Error fetching favorites:", error);
+    res.status(500).json({ error: "Error fetching favorites", details: error });
   }
 };
 
@@ -29,58 +29,51 @@ export const getFavoriteById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    // Busca um favorito específico pelo ID com os itens associados
+    // Search for a favorite by ID with its associated items
     const favorite = await FavoritesModel.findByPk(id, {
       include: [
         {
           model: ItemModel,
-          as: "items", // Deve corresponder ao alias definido no relacionamento
+          as: "items",
         },
       ],
     });
 
     if (!favorite) {
-      return res.status(404).json({ error: "Favorito não encontrado" });
+      return res.status(404).json({ error: "Favorites not found" });
     }
 
     res.status(200).json(favorite);
   } catch (error) {
-    console.error("Erro ao buscar favorito:", error);
-    res.status(500).json({ error: "Erro ao buscar favorito", details: error });
+    console.error("Error fetching favorite:", error);
+    res.status(500).json({ error: "Error fetching favorite", details: error });
   }
 };
 
 export const createFavorite = async (req: Request, res: Response) => {
   try {
     const { name, items } = req.body;
-
-    // Valida os dados de entrada usando o schema do Zod (se necessário)
     const parsedData = createFavoriteSchema.parse({ name, items });
 
-    // Cria um novo favorito
     if (!parsedData.name) {
-      return res.status(400).json({ error: "O nome do favorito é obrigatório." });
+      return res.status(400).json({ error: "Name is required" });
     }
     const favorite = await FavoritesModel.create({ name: parsedData.name });
 
-    // Valida os itens fornecidos
     if (parsedData.items && parsedData.items.length > 0) {
       const validItems = await ItemModel.findAll({
         where: { id: parsedData.items },
       });
 
-      // Verifica se todos os itens fornecidos existem
       if (validItems.length !== parsedData.items.length) {
         return res.status(400).json({
-          error: "Alguns itens fornecidos não existem.",
+          error: "Invalid item IDs. Please provide valid item IDs",
         });
       }
 
-      // Associa os itens ao favorito
       await favorite.addItems(validItems);
     }
 
-    // Busca o favorito criado com os itens associados
     const favoriteWithItems = await FavoritesModel.findByPk(favorite.id, {
       include: [
         {
@@ -93,32 +86,29 @@ export const createFavorite = async (req: Request, res: Response) => {
     res.status(201).json(favoriteWithItems);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: "Erro de validação", details: error.errors });
+      return res.status(400).json({ error: "Error in validate favorite", details: error.errors });
     }
 
-    console.error("Erro ao criar favorito:", error);
-    res.status(500).json({ error: "Erro ao criar favorito", details: error });
+    console.error("Error creating favorite:", error);
+    res.status(500).json({ error: "Error creating favorite", details: error });
   }
 };
 
 export const deleteFavoriteById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-
-    // Busca o favorito pelo ID
     const favorite = await FavoritesModel.findByPk(id);
 
     if (!favorite) {
-      return res.status(404).json({ error: "Favorito não encontrado" });
+      return res.status(404).json({ error: "Favorite not found" });
     }
 
-    // Remove o favorito
     await favorite.destroy();
 
-    res.status(200).json({ message: "Favorito removido com sucesso" });
+    res.status(200).json({ message: "Favorite deleted successfully" });
   } catch (error) {
-    console.error("Erro ao remover favorito:", error);
-    res.status(500).json({ error: "Erro ao remover favorito", details: error });
+    console.error("Error removing favorite:", error);
+    res.status(500).json({ error: "Error removing favorite:", details: error });
   }
 };
 
@@ -126,20 +116,17 @@ export const updateFavorite = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    // Valida os dados de entrada usando o schema do Zod
     const parsedData = updateFavoriteSchema.parse(req.body);
 
-    // Busca o favorito pelo ID
     const favorite = await FavoritesModel.findByPk(id);
 
     if (!favorite) {
-      return res.status(404).json({ error: "Favorito não encontrado" });
+      return res.status(404).json({ error: "Favorite not found" });
     }
 
-    // Atualiza o nome do favorito
     favorite.name = parsedData.name || favorite.name;
 
-    // Atualiza os itens associados, se fornecidos
+    // Update items associated with the favorite
     if (parsedData.items && parsedData.items.length > 0) {
       const items = await ItemModel.findAll({ where: { id: parsedData.items } });
       await favorite.setItems(items);
@@ -147,7 +134,7 @@ export const updateFavorite = async (req: Request, res: Response) => {
 
     await favorite.save();
 
-    // Busca o favorito atualizado com os itens associados
+    // Seacrh for the updated favorite with its associated items
     const updatedFavorite = await FavoritesModel.findByPk(favorite.id, {
       include: [
         {
@@ -160,10 +147,10 @@ export const updateFavorite = async (req: Request, res: Response) => {
     res.status(200).json(updatedFavorite);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return res.status(400).json({ error: "Erro de validação", details: error.errors });
+      return res.status(400).json({ error: "Error in validate favorite", details: error.errors });
     }
 
-    console.error("Erro ao atualizar favorito:", error);
-    res.status(500).json({ error: "Erro ao atualizar favorito", details: error });
+    console.error("Error updating favorite:", error);
+    res.status(500).json({ error: "Error updating favorite", details: error });
   }
 };

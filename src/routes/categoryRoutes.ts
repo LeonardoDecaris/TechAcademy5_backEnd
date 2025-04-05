@@ -3,7 +3,6 @@ import { getAll, getCategoryById, createCategory, updateCategory, deleteCategory
 import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = express.Router();
-
 router.get('/categories', authMiddleware, getAll);
 router.get('/categories/:id', authMiddleware, getCategoryById);
 router.post('/categories', authMiddleware, createCategory);

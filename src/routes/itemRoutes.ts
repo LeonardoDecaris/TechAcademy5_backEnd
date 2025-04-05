@@ -3,7 +3,6 @@ import { getAll, getItemById, createItem, updateItem, deleteItemById, getPaginat
 import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = express.Router();
-
 router.get('/items', getAll);
 router.get('/items/paginated', getPaginatedItems);
 router.get('/items/paginated/:page', getPaginatedItems);

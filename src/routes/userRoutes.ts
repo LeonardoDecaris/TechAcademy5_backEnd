@@ -3,7 +3,6 @@ import { getAllUsers, getUserById, createUser, updateUser, deleteUserById, getPa
 import { authMiddleware } from '../middleware/authMiddleware';
 
 const router = express.Router();
-
 router.get("/users", getAllUsers);
 router.get("/users/paginated", getPaginatedUsers); 
 router.get('/users/paginated/:page', getPaginatedUsers); 

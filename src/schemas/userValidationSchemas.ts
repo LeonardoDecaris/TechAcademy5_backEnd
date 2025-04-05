@@ -1,17 +1,23 @@
 import { z } from "zod";
 import UserModel from "../models/UserModel";
 
-// Função para validar e formatar CPF
+// Function to validate and format CPF
 const validateAndFormatCPF = (cpf: string): string => {
+  // Remove all non-numeric characters from CPF
   const cleanedCPF = cpf.replace(/\D/g, '');
 
+  // Check if the CPF has exactly 11 digits
   if (cleanedCPF.length !== 11) {
-    throw new Error("Formato de CPF Inválido");
+    throw new Error("Invalid CPF format");
   }
+
+  // Internal function to validate CPF based on verification digits
   const isValidCPF = (cpf: string): boolean => {
     let sum;
     let remainder;
     sum = 0;
+
+    // Common invalid CPF (all digits are the same)
     if (cpf === "00000000000") return false;
 
     for (let i = 1; i <= 9; i++) sum += parseInt(cpf.substring(i - 1, i)) * (11 - i);
@@ -30,59 +36,60 @@ const validateAndFormatCPF = (cpf: string): string => {
     return true;
   };
 
+  // Check if the CPF is valid
   if (!isValidCPF(cleanedCPF)) {
-    throw new Error("CPF Inválido");
+    throw new Error("Invalid CPF");
   }
 
   return cleanedCPF;
 };
 
-// Função para verificar se o CPF é único
+// Function to check if the CPF is unique in the database
 const isCPFUnique = async (cpf: string): Promise<boolean> => {
   const user = await UserModel.findOne({ where: { cpf } });
   return !user;
 };
 
-// Função para verificar se o email é único
+// Function to check if the email is unique in the database
 const isEmailUnique = async (email: string): Promise<boolean> => {
   const user = await UserModel.findOne({ where: { email } });
   return !user;
 };
 
-// Esquema de validação de email para criação
-const emailSchemaForCreate = z.string().email("Endereço de email inválido").refine(async (email) => {
-  const isUnique = await isEmailUnique(email);
-  return isUnique;
-}, {
-  message: "Email já existe",
-});
+// Email validation schema for user creation
+const emailSchemaForCreate = z.string().email("Invalid email address").refine(async (email) => {
+    const isUnique = await isEmailUnique(email);
+return isUnique;
+  }, {
+    message: "Email already exists",
+  });
 
-// Esquema de validação de CPF para criação
-const cpfSchemaForCreate = z.string().nonempty("CPF é obrigatório").transform(validateAndFormatCPF).refine(async (cpf) => {
-  const isUnique = await isCPFUnique(cpf);
-  return isUnique;
-}, {
-  message: "Esse CPF já existe",
-});
+const cpfSchemaForCreate = z
+  .string()
+  .nonempty("CPF is required")
+  .transform(validateAndFormatCPF)
+  .refine(async (cpf) => {
+    const isUnique = await isCPFUnique(cpf);
+    return isUnique;
+  }, {
+    message: "This CPF already exists",
+  });
 
-// Esquema de validação de email para atualização (sem validação de unicidade)
-const emailSchemaForUpdate = z.string().email("Endereço de email inválido");
 
-// Esquema de validação de CPF para atualização (sem validação de unicidade)
-const cpfSchemaForUpdate = z.string().nonempty("CPF é obrigatório").transform(validateAndFormatCPF);
+// Email & CPF validation schema for user
+const emailSchemaForUpdate = z.string().email("Invalid email address");
+const cpfSchemaForUpdate = z.string().nonempty("CPF is required").transform(validateAndFormatCPF);
 
-// Esquema de validação para criação de usuário
 export const createUserSchema = z.object({
-  name: z.string().nonempty("Nome é obrigatório"),
+  name: z.string().nonempty("Name is required"),
   cpf: cpfSchemaForCreate,
   email: emailSchemaForCreate,
-  password: z.string().min(6, "Senha deve ter no mínimo 6 caracteres"),
+  password: z.string().min(6, "Password must be at least 6 characters long"),
 });
 
-// Esquema de validação para atualização de usuário
 export const updateUserSchema = z.object({
-  name: z.string().nonempty("Nome é obrigatório"),
+  name: z.string().nonempty("Name is required"),
   cpf: cpfSchemaForUpdate,
   email: emailSchemaForUpdate,
-  password: z.string().min(6, "Senha deve ter no mínimo 6 caracteres"),
+  password: z.string().min(6, "Password must be at least 6 characters long"),
 });

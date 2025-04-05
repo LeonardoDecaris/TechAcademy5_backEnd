@@ -6,12 +6,12 @@ const port = 3000;
 sequelize
   .sync({ alter: true })
   .then(() => {
-    console.log("Database encontrado");
+    console.log("Database connected");
   })
   .catch((error) => {
-    console.log("Database não encontrado");
+    console.log("Database connection error:", error);
   });
 
 app.listen(port, () => {
-  console.log("server is running on port", port);
+  console.log("Server is running on port", port);
 });

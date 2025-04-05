@@ -2,7 +2,6 @@ import express from "express";
 import { getAll, createFavorite, deleteFavoriteById, getFavoriteById, updateFavorite } from "../controllers/favoritesController";
 
 const router = express.Router();
-
 router.get("/favorites", getAll);
 router.post("/favorites", createFavorite);
 router.delete("/favorites/:id", deleteFavoriteById);

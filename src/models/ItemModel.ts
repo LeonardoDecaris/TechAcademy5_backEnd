@@ -3,7 +3,6 @@ import sequelize from "../config/database";
 import AuthorModel from "./AuthorModel";
 import CategoryModel from "./CategoryModel";
 
-// Definição dos atributos do Item
 interface ItemAttributes {
   id: number;
   name: string;
@@ -16,10 +15,8 @@ interface ItemAttributes {
   updatedAt?: Date;
 }
 
-// Definição dos atributos opcionais para criação
 interface ItemCreationAttributes extends Optional<ItemAttributes, "id"> {}
 
-// Classe do modelo Item
 class ItemModel extends Model<ItemAttributes, ItemCreationAttributes> implements ItemAttributes {
   public id!: number;
   public name!: string;
@@ -30,13 +27,10 @@ class ItemModel extends Model<ItemAttributes, ItemCreationAttributes> implements
   public author_id!: number;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
-
-  // Propriedades para associações
-  public category?: CategoryModel; // Associação com CategoryModel
-  public author?: AuthorModel;     // Associação com AuthorModel
+  public category?: CategoryModel;
+  public author?: AuthorModel; 
 }
 
-// Inicialização do modelo
 ItemModel.init(
   {
     id: {
@@ -76,7 +70,6 @@ ItemModel.init(
   }
 );
 
-// Definição das associações
 ItemModel.belongsTo(CategoryModel, { as: "category", foreignKey: "category_id" });
 ItemModel.belongsTo(AuthorModel, { as: "author", foreignKey: "author_id" });
 

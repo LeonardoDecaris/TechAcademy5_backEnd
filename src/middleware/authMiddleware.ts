@@ -8,13 +8,10 @@ declare global {
 }
 
 export const authMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction
+  req: Request, res: Response, next: NextFunction
 ) => {
-  // Simulação de autenticação - substitua pelo seu mecanismo real
   req.body.user = {
-    id: "1", // ID do usuário logado
+    id: "1",
     name: "João",
     cpf: "847.671.250-22",
     email: "email@exemplo.com",

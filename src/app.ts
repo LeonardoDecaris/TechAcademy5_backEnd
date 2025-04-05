@@ -11,7 +11,6 @@ import swaggerUi from "swagger-ui-express";
 import swaggerSpec from "./config/swaggerConfig";
 
 const app = express();
-// CORS CONFIG
 app.use(cors());
 
 app.get("/", (req, res) => {
@@ -19,6 +18,7 @@ app.get("/", (req, res) => {
 });
 
 app.use(express.json());
+// Swagger
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use(authorRoutes);
 app.use(categoryRoutes);

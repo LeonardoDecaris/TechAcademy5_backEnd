@@ -1,11 +1,9 @@
 import { z } from "zod";
 
-// Esquema de validação para criação de autor
 export const createAuthorSchema = z.object({
-  name: z.string().nonempty("Nome é obrigatório"),
+  name: z.string().nonempty("Name is required"),
 });
 
-// Esquema de validação para atualização de autor
 export const updateAuthorSchema = z.object({
-  name: z.string().nonempty("Nome é obrigatório"),
+  name: z.string().nonempty("Name is required"),
 });

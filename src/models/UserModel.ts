@@ -1,6 +1,5 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database";
-import { cp } from "fs";
 import bcrypt from "bcrypt";
 
 class UserModel extends Model {
@@ -14,7 +13,6 @@ class UserModel extends Model {
   public async hashPassword() {
     this.password = await bcrypt.hash(this.password!, 10);
   }
-
   public async validatePassword(password: string): Promise<boolean> {
     return await bcrypt.compare(password, this.password!);
   }

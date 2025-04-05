@@ -51,7 +51,7 @@ describe('Login Endpoint', () => {
       });
 
     expect(response.status).toBe(400);
-    expect(response.body).toHaveProperty('message', 'O campo email é obrigatório.');
+    expect(response.body).toHaveProperty('message', 'Email is required');
   });
 
   test('POST /login should fail when password is missing', async () => {
@@ -62,6 +62,6 @@ describe('Login Endpoint', () => {
       });
 
     expect(response.status).toBe(400);
-    expect(response.body).toHaveProperty('message', 'O campo senha é obrigatório.');
+    expect(response.body).toHaveProperty('message', 'Password is required');
   });
 });

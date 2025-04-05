@@ -3,7 +3,6 @@ import { getAll, getAuthorById, createAuthor, updateAuthor, deleteAuthorById} fr
 import { authMiddleware } from '../middleware/authMiddleware'
 
 const router = express.Router();
-
 router.get("/authors", getAll);
 router.get("/authors/:id", getAuthorById);
 router.post("/authors", authMiddleware, createAuthor);

@@ -1,11 +1,18 @@
 import express from "express";
-import { getAllUsers, getUserById, createUser, updateUser, deleteUserById, getPaginatedUsers } from "../controllers/userController";
-import { authMiddleware } from '../middleware/authMiddleware';
+import {
+  getAllUsers,
+  getUserById,
+  createUser,
+  updateUser,
+  deleteUserById,
+  getPaginatedUsers,
+} from "../controllers/userController";
+import { authMiddleware } from "../middleware/authMiddleware";
 
 const router = express.Router();
 router.get("/users", getAllUsers);
-router.get("/users/paginated", getPaginatedUsers); 
-router.get('/users/paginated/:page', getPaginatedUsers); 
+router.get("/users/paginated", getPaginatedUsers);
+router.get("/users/paginated/:page", getPaginatedUsers);
 router.get("/users/:id", authMiddleware, getUserById);
 router.post("/users", createUser);
 router.put("/users/:id", authMiddleware, updateUser);

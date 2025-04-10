@@ -34,7 +34,7 @@ Repositório da API do projeto **Tech Academy 5**, desenvolvido em Node.js com T
 
 ```bash
 git clone https://github.com/LeonardoDecaris/TechAcademy5_backEnd
-cd tech-academy5-backend
+cd TechAcademy5_backEnd
 ```
 
 ### 2. Instale as dependências

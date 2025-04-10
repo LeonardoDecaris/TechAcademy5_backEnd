@@ -33,7 +33,7 @@ Repositório da API do projeto **Tech Academy 5**, desenvolvido em Node.js com T
 ### 1. Clone o projeto
 
 ```bash
-git clone https://github.com/seu-usuario/tech-academy5-backend.git
+git clone https://github.com/LeonardoDecaris/TechAcademy5_backEnd
 cd tech-academy5-backend
 ```
 

@@ -15,7 +15,7 @@ const sequelize = new Sequelize(
 if (process.env.NODE_ENV !== "test") {
   (async () => {
     try {
-      await sequelize.sync();
+      await sequelize.sync({ alter: true });
       console.log("Banco de dados sincronizado.");
     } catch (error) {
       console.error("Erro ao sincronizar o banco de dados:", error);

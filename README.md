@@ -43,19 +43,7 @@ cd tech-academy5-backend
 npm install
 ```
 
-### 3. Configure as variáveis de ambiente
-
-Crie um arquivo `.env` na raiz do projeto com o seguinte conteúdo (ou use o `.env.example` como base):
-
-```env
-PORT=3000
-DATABASE_URL=mysql://usuario:senha@localhost:3306/harmonicsound_homolog
-JWT_SECRET=sua_chave_secreta
-```
-
-> Altere os valores conforme suas credenciais locais.
-
-### 4. Execute o projeto
+### 3. Execute o projeto
 
 ```bash
 npm run dev

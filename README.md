@@ -1,7 +1,6 @@
-# 🚀 Tech Academy 5 - BackEnd
+# Tech Academy 5 - BackEnd
 
-Repositório da API do projeto **Tech Academy 5**, desenvolvido em Node.js com TypeScript.  
-Este projeto visa gerenciar dados de usuários, itens, favoritos, autores e categorias em um ambiente seguro e escalável.
+Repositório da API do projeto **Tech Academy 5**, desenvolvido em Node.js com TypeScript. 
 
 ---
 
@@ -62,33 +61,6 @@ JWT_SECRET=sua_chave_secreta
 npm run dev
 ```
 
-### 5. Execute os testes
-
-```bash
-npm run test
-```
-
----
-
-## 📁 Estrutura do Projeto
-
-```bash
-tech-academy5-backend/
-├── src/
-│   ├── controllers/
-│   ├── middlewares/
-│   ├── models/
-│   ├── routes/
-│   ├── schemas/
-│   ├── services/
-│   └── main.ts
-├── tests/
-├── .env
-├── .env.example
-├── package.json
-└── README.md
-```
-
 ---
 
 ## 📚 Documentação da API
@@ -115,17 +87,6 @@ http://localhost:3000/api-docs
 
 ---
 
-## 🔐 Autenticação com JWT
-
-Algumas rotas são protegidas e requerem autenticação via **Bearer Token (JWT)**.  
-Adicione o token no cabeçalho da requisição:
-
-```http
-Authorization: Bearer <seu_token_aqui>
-```
-
----
-
 ## 🧪 Testes
 
 Os testes automatizados utilizam a base de dados `harmonicsound_test`.
@@ -138,17 +99,6 @@ npm run test
 
 ---
 
-## 🧑‍💻 Contribuindo
-
-Contribuições são bem-vindas!  
-Você pode abrir uma *Issue*, sugerir melhorias ou enviar um *Pull Request* com novas funcionalidades ou correções.
-
----
-
 ## 📄 Licença
 
 Este projeto está licenciado sob a **MIT License**.
-
----
-
-Feito com 💙 pela equipe **Tech Academy 5**
